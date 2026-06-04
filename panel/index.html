@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="config.js"></script>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/da2xskien/image/upload/v1777507199/WhatsApp_Image_2026-04-29_at_17.54.30_fvkdq2.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuencasa · Panel Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#C8102E;--red-dark:#9B0C22;--red-pale:#FFF0F2;--white:#FFFFFF;--bg:#F4F2EF;--sidebar:#1C1C1E;--charcoal:#1C1C1E;--gray:#6B6B6B;--gray-lt:#E8E4E1;--green:#1E7E34;--green-lt:#D4EDDA;--blue:#185FA5;--blue-lt:#D6E4F0;--yellow:#F59E0B;--yellow-lt:#FEF3C7;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--charcoal);display:flex;min-height:100vh;}
+  .sidebar{width:240px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto;}
+  .sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .sidebar-logo img{height:44px;object-fit:contain;max-width:180px;}
+  .sidebar-logo p{font-size:11px;color:rgba(255,255,255,0.35);margin-top:5px;}
+  .sidebar-nav{flex:1;padding:10px 0;}
+  .nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);padding:10px 20px 4px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);cursor:pointer;transition:all .2s;text-decoration:none;border-left:3px solid transparent;}
+  .nav-item:hover{color:#fff;background:rgba(255,255,255,0.05);}
+  .nav-item.active{color:#fff;background:rgba(200,16,46,0.15);border-left-color:var(--red);}
+  .nav-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+  .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;display:none;}
+  .sidebar-footer{padding:12px 20px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;color:rgba(255,255,255,0.25);}
+  .main{margin-left:240px;flex:1;display:flex;flex-direction:column;}
+  .topbar{background:var(--white);border-bottom:1px solid var(--gray-lt);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
+  .topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+  .topbar-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;}
+  .btn-primary{background:var(--red);color:#fff;}
+  .btn-primary:hover{background:var(--red-dark);}
+  .btn-secondary{background:var(--white);color:var(--charcoal);border:1px solid var(--gray-lt);}
+  .btn-secondary:hover{background:var(--bg);}
+  .btn-danger{background:#FEE2E2;color:#991B1B;}
+  .btn-danger:hover{background:#FECACA;}
+  .btn-green{background:var(--green-lt);color:var(--green);}
+  .btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
+  .content{padding:20px 24px;flex:1;}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  .stat-card{background:var(--white);border-radius:12px;border:1px solid var(--gray-lt);padding:16px;}
+  .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--charcoal);line-height:1;}
+  .stat-label{font-size:12px;color:var(--gray);font-weight:500;margin-top:4px;}
+  .stat-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+  .stat-icon svg{width:16px;height:16px;fill:none;stroke-width:2;stroke:currentColor;}
+  .si-red{background:var(--red-pale);color:var(--red);}
+  .si-green{background:var(--green-lt);color:var(--green);}
+  .si-blue{background:var(--blue-lt);color:var(--blue);}
+  .si-yellow{background:var(--yellow-lt);color:var(--yellow);}
+  .card{background:var(--white);border-radius:12px;border:1px solid var(--gray-lt);margin-bottom:16px;overflow:hidden;}
+  .card-header{padding:14px 18px;border-bottom:1px solid var(--gray-lt);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .card-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:7px;}
+  .card-title svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;}
+  .destacadas-config{padding:12px 18px;background:var(--red-pale);border-bottom:1px solid rgba(200,16,46,0.15);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .config-label{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.5px;}
+  .config-input{width:60px;padding:6px 10px;border:1.5px solid rgba(200,16,46,0.3);border-radius:7px;font-size:13px;font-weight:700;text-align:center;color:var(--red);background:var(--white);outline:none;font-family:'DM Sans',sans-serif;}
+  .config-hint{font-size:11px;color:var(--gray);flex:1;}
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:900px;}
+  th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray);border-bottom:1px solid var(--gray-lt);background:var(--bg);white-space:nowrap;}
+  td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--gray-lt);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#fafafa;}
+  .prop-thumb{width:44px;height:32px;border-radius:5px;object-fit:cover;}
+  .prop-thumb-ph{width:44px;height:32px;border-radius:5px;background:var(--gray-lt);}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;}
+  .badge-venta{background:var(--red-pale);color:var(--red);}
+  .badge-arriendo{background:var(--blue-lt);color:var(--blue);}
+  .badge-leido{background:var(--green-lt);color:var(--green);}
+  .badge-nuevo{background:var(--yellow-lt);color:var(--yellow);}
+  .badge-casa{background:#F3F4F6;color:#374151;}
+  .badge-depto{background:#EDE9FE;color:#6D28D9;}
+  .badge-proy{background:#D1FAE5;color:#065F46;}
+  .toggle{position:relative;width:34px;height:18px;cursor:pointer;display:inline-block;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-slider{position:absolute;inset:0;background:var(--gray-lt);border-radius:18px;transition:.2s;}
+  .toggle-slider::before{content:'';position:absolute;width:12px;height:12px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;}
+  .toggle input:checked+.toggle-slider{background:var(--green);}
+  .toggle input:checked+.toggle-slider::before{transform:translateX(16px);}
+  .sectores-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 18px;}
+  .sector-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid var(--gray-lt);border-radius:8px;background:var(--bg);}
+  .sector-name{font-size:12px;font-weight:500;}
+  .sector-par{font-size:11px;color:var(--gray);}
+  .add-form{padding:12px 18px;border-top:1px solid var(--gray-lt);display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+  .fl{font-size:11px;font-weight:600;color:var(--charcoal);display:block;margin-bottom:4px;}
+  .fhint{font-size:11px;color:var(--gray);margin-top:3px;}
+  .fi{padding:8px 12px;border:1.5px solid var(--gray-lt);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--white);outline:none;transition:border-color .2s;appearance:none;width:100%;}
+  .fi:focus{border-color:var(--red);}
+  textarea.fi{resize:vertical;}
+  .msg-item{padding:12px 18px;border-bottom:1px solid var(--gray-lt);display:flex;gap:12px;align-items:flex-start;}
+  .msg-item:last-child{border-bottom:none;}
+  .msg-avatar{width:32px;height:32px;border-radius:50%;background:var(--red-pale);color:var(--red);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;}
+  .msg-name{font-size:13px;font-weight:600;}
+  .msg-text{font-size:12px;color:var(--gray);margin-top:2px;line-height:1.5;}
+  .msg-meta{font-size:11px;color:var(--gray);margin-top:3px;}
+  /* Testimonios grid */
+  .testi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px 18px;}
+  .testi-item{border:1px solid var(--gray-lt);border-radius:10px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:8px;}
+  .testi-stars{color:#F59E0B;font-size:13px;letter-spacing:2px;}
+  .testi-texto{font-size:12px;color:var(--gray);line-height:1.5;font-style:italic;}
+  .testi-autor{font-size:13px;font-weight:600;}
+  .testi-rol{font-size:11px;color:var(--gray);}
+  .testi-actions{display:flex;gap:6px;margin-top:4px;}
+  /* Equipo grid */
+  .equipo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:14px 18px;}
+  .equipo-item{border:1px solid var(--gray-lt);border-radius:10px;padding:14px;background:var(--bg);display:flex;gap:12px;align-items:flex-start;}
+  .equipo-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--gray-lt);flex-shrink:0;}
+  .equipo-avatar-ph{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--red-pale),var(--red));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--red);flex-shrink:0;}
+  .equipo-info{flex:1;}
+  .equipo-nombre{font-size:13px;font-weight:700;}
+  .equipo-cargo{font-size:11px;color:var(--gray);}
+  .equipo-ig{font-size:11px;color:var(--blue);margin-top:2px;}
+  .equipo-actions{display:flex;gap:5px;margin-top:6px;}
+  /* Modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--white);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+  .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--gray);line-height:1;}
+  .modal-close:hover{color:var(--red);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .fg{display:flex;flex-direction:column;gap:4px;}
+  .fg.full{grid-column:1/-1;}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--charcoal);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:300;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.ok{background:var(--green);}
+  .toast.err{background:var(--red);}
+
+  /* ── HAMBURGER ── */
+  .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;-webkit-tap-highlight-color:transparent;}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--charcoal);border-radius:2px;transition:all .25s;}
+
+  /* ── OVERLAY ── */
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:49;}
+  .sidebar-overlay.active{display:block;}
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;}
+    .hamburger{display:flex;}
+    .content{padding:12px 14px;}
+    .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
+    .stat-val{font-size:28px;}
+    .form-grid{grid-template-columns:1fr;}
+    .fg.full{grid-column:1;}
+    .modal-bg{align-items:flex-end;padding:0;}
+    .modal{width:100%;max-width:100%;border-radius:18px 18px 0 0;max-height:92vh;padding:20px 16px;}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .testi-grid{grid-template-columns:1fr;}
+    .equipo-grid{grid-template-columns:1fr;}
+    .sectores-grid{grid-template-columns:1fr 1fr;}
+    .card-header{flex-wrap:wrap;gap:8px;}
+    .card-header .btn{font-size:11px;padding:6px 10px;}
+    .topbar{padding:12px 16px;}
+  }
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Cuencasa" style="filter:brightness(0) invert(1)">
+    <p>Panel de administracion</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a class="nav-item" id="nav-propiedades" href="#" onclick="mostrarSeccion('propiedades');return false;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Propiedades</a>
+    <a class="nav-item" id="nav-proyectos" href="#" onclick="mostrarSeccion('proyectos');return false;"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Proyectos</a>
+    <a class="nav-item" id="nav-mensajes" href="#" onclick="mostrarSeccion('mensajes');return false;"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Mensajes<span class="nav-badge" id="badge-mensajes">0</span></a>
+    <div class="nav-section">Contenido</div>
+    <a class="nav-item" id="nav-testimonios" href="#" onclick="mostrarSeccion('testimonios');return false;"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>Testimonios</a>
+    <a class="nav-item" id="nav-equipo" href="#" onclick="mostrarSeccion('equipo');return false;"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Equipo</a>
+    <a class="nav-item" id="nav-servicios" href="#" onclick="mostrarSeccion('servicios');return false;"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Servicios</a>
+    <div class="nav-section">Configuracion</div>
+    <a class="nav-item" id="nav-sectores" href="#" onclick="mostrarSeccion('sectores');return false;"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Sectores</a>
+    <a class="nav-item" id="nav-whatsapp" href="#" onclick="mostrarSeccion('whatsapp');return false;"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>WhatsApp</a>
+    <div class="nav-section">Acciones</div>
+    <a class="nav-item" href="nueva-propiedad.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva propiedad</a>
+    <a class="nav-item" href="nuevo-proyecto.html"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Nuevo proyecto</a>
+    <a class="nav-item" href="../frontend/index.html" target="_blank"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver sitio web</a>
+  </nav>
+  <div class="sidebar-footer">Cuencasa v2.0</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div><div class="topbar-title" id="topbar-title">Propiedades</div><div class="topbar-sub" id="topbar-sub">Control de destacadas y gestion</div></div>
+    </div>
+    <div id="topbar-actions"><a class="btn btn-primary" href="nueva-propiedad.html"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nueva propiedad</a></div>
+  </div>
+
+  <div class="content">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon si-red"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="stat-val" id="stat-total">-</div><div class="stat-label">Total propiedades</div></div>
+      <div class="stat-card"><div class="stat-icon si-green"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="stat-val" id="stat-destacadas">-</div><div class="stat-label">Destacadas en inicio</div></div>
+      <div class="stat-card"><div class="stat-icon si-blue"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="stat-val" id="stat-mensajes">-</div><div class="stat-label">Mensajes nuevos</div></div>
+      <div class="stat-card"><div class="stat-icon si-yellow"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-val" id="stat-equipo">-</div><div class="stat-label">Miembros del equipo</div></div>
+    </div>
+
+    <!-- PROPIEDADES -->
+    <div id="seccion-propiedades" style="display:none">
+      <div class="card">
+        <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Propiedades destacadas en inicio</div></div>
+        <div class="destacadas-config">
+          <span class="config-label">Mostrar en inicio:</span>
+          <input class="config-input" type="number" id="config-cantidad" min="1" max="20" value="6">
+          <span class="config-hint">propiedades destacadas. Activa el toggle para mostrar en la pagina principal.</span>
+          <button class="btn btn-primary" onclick="guardarConfig()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Foto</th><th>Titulo / ID</th><th>Ubicacion</th><th>Precio</th><th>Tipo op.</th><th>Gestion</th><th>Hab.</th><th>Banos</th><th>m2</th><th>Dueno</th><th>Telefono</th><th style="text-align:center">Inicio</th><th>Acciones</th></tr></thead>
+            <tbody id="tbody-propiedades"><tr><td colspan="13" style="text-align:center;padding:28px;color:var(--gray)">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTOS -->
+    <div id="seccion-proyectos" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Proyectos inmobiliarios</div>
+          <a class="btn btn-primary" href="nuevo-proyecto.html"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo proyecto</a>
+        </div>
+        <div class="table-wrap">
+          <table style="min-width:800px">
+            <thead><tr><th>Foto</th><th>Titulo</th><th>Estado</th><th>Precio desde</th><th>Unidades</th><th>Ubicacion</th><th style="text-align:center">Destacado</th><th>Acciones</th></tr></thead>
+            <tbody id="tbody-proyectos"><tr><td colspan="8" style="text-align:center;padding:28px;color:var(--gray)">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSAJES -->
+    <div id="seccion-mensajes" style="display:none">
+      <div class="card">
+        <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Mensajes recibidos</div></div>
+        <div id="lista-mensajes"></div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIOS -->
+    <div id="seccion-testimonios" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Testimonios del sitio</div>
+          <button class="btn btn-primary" onclick="abrirModalTestimonio()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo testimonio</button>
+        </div>
+        <div class="testi-grid" id="testi-grid"><div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--gray)">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- EQUIPO -->
+    <div id="seccion-equipo" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Equipo - pagina Nosotros</div>
+          <button class="btn btn-primary" onclick="abrirModalEquipo()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo miembro</button>
+        </div>
+        <div class="equipo-grid" id="equipo-grid"><div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--gray)">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- SECTORES -->
+    <div id="seccion-sectores" style="display:none">
+      <div class="card">
+        <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Sectores de Cuenca</div></div>
+        <div class="sectores-grid" id="sectores-grid"><div style="grid-column:1/-1;text-align:center;color:var(--gray);font-size:13px;padding:20px">Cargando...</div></div>
+        <div class="add-form">
+          <div class="fg" style="flex:1;min-width:160px"><label class="fl">Parroquia</label><select class="fi" id="nuevo-parroquia"><option value="">Opcional</option></select></div>
+          <div class="fg" style="flex:2;min-width:180px"><label class="fl">Nombre del sector</label><input class="fi" type="text" id="nuevo-sector" placeholder="Ej. El Ejido"></div>
+          <button class="btn btn-primary" onclick="agregarSector()" style="align-self:flex-end"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div id="seccion-whatsapp" style="display:none">
+      <div class="card">
+        <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" style="stroke:#25D366"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Boton WhatsApp</div></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;max-width:500px">
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;font-size:12px;color:#166534">El numero y mensaje configurados aqui aparecen en todos los botones WhatsApp del sitio.</div>
+          <div class="fg"><label class="fl">Numero de WhatsApp</label><input class="fi" type="text" id="wa-numero" placeholder="593999999999" style="max-width:280px"><div class="fhint">Sin + ni espacios. Ej: 593987654321</div></div>
+          <div class="fg"><label class="fl">Mensaje predeterminado</label><textarea class="fi" id="wa-mensaje" rows="3" style="max-width:460px"></textarea></div>
+          <div class="fg full"><label class="fl">Imagen principal (hero)</label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px">
+              <img id="hero-img-preview" src="" alt="hero" style="display:none;width:140px;height:79px;object-fit:cover;border-radius:6px;border:1px solid var(--gray-lt)">
+              <div>
+                <input type="file" id="hero-imagen-file" accept="image/*" style="display:none" onchange="subirHeroImagen(this)">
+                <button class="btn btn-secondary" onclick="document.getElementById('hero-imagen-file').click()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Subir imagen</button>
+                <div class="fhint" id="hero-img-status">Imagen de fondo del hero en el inicio</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:fit-content" onclick="guardarWhatsapp()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+          <div id="wa-preview" style="display:none">
+            <a id="wa-preview-link" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:#25D366;color:white;padding:9px 16px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Probar enlace WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div id="seccion-servicios" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Servicios del sitio Nosotros</div>
+          <button class="btn btn-primary" onclick="abrirModalServicioPanel()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo servicio</button>
+        </div>
+        <div id="servicios-list" style="padding:16px;display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL TESTIMONIO -->
+<div class="modal-bg" id="modal-testimonio">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-testi-titulo">Nuevo testimonio</span>
+      <button class="modal-close" onclick="cerrarModal('modal-testimonio')">x</button>
+    </div>
+    <input type="hidden" id="testi-id">
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="testi-nombre" placeholder="Ej. Maria Rodriguez"></div>
+      <div class="fg"><label class="fl">Rol / Zona</label><input class="fi" id="testi-rol" placeholder="Ej. Compradora - El Vecino"></div>
+      <div class="fg full"><label class="fl">Testimonio *</label><textarea class="fi" id="testi-texto" rows="4" placeholder="Escribe el testimonio..."></textarea></div>
+      <div class="fg"><label class="fl">Estrellas (1-5)</label><input class="fi" type="number" id="testi-estrellas" value="5" min="1" max="5"></div>
+      <div class="fg"><label class="fl">Orden</label><input class="fi" type="number" id="testi-orden" value="0" min="0"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-testimonio')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarTestimonio()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EQUIPO -->
+<div class="modal-bg" id="modal-equipo">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-equipo-titulo">Nuevo miembro</span>
+      <button class="modal-close" onclick="cerrarModal('modal-equipo')">x</button>
+    </div>
+    <input type="hidden" id="equipo-id">
+    <input type="hidden" id="equipo-foto">
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="equipo-nombre" placeholder="Ej. Juan Perez"></div>
+      <div class="fg"><label class="fl">Cargo</label><input class="fi" id="equipo-cargo" placeholder="Ej. Asesor Inmobiliario"></div>
+      <div class="fg full"><label class="fl">Descripcion</label><textarea class="fi" id="equipo-desc" rows="3" placeholder="Descripcion del miembro..."></textarea></div>
+      <div class="fg full">
+        <label class="fl">Foto del miembro</label>
+        <div id="equipo-foto-area" onclick="document.getElementById('equipo-foto-input').click()" style="border:2px dashed var(--gray-lt);border-radius:8px;height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);cursor:pointer;position:relative">
+          <span id="equipo-foto-placeholder" style="font-size:12px;color:var(--gray)">Sin foto — clic para seleccionar</span>
+          <img id="equipo-foto-preview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover">
+        </div>
+        <input type="file" id="equipo-foto-input" accept="image/*" style="display:none" onchange="seleccionarFotoEquipo(this)">
+        <div class="fhint" style="margin-top:4px">La foto se sube a Cloudinary al guardar</div>
+      </div>
+      <div class="fg"><label class="fl">Instagram</label><input class="fi" id="equipo-ig" placeholder="@usuario"></div>
+      <div class="fg"><label class="fl">Orden</label><input class="fi" type="number" id="equipo-orden" value="0" min="0"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-equipo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEquipo()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ZONA -->
+<div class="modal-bg" id="modal-zona">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-zona-titulo">Nueva zona</span>
+      <button class="modal-close" onclick="cerrarModal('modal-zona')">x</button>
+    </div>
+    <input type="hidden" id="zona-id">
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="zona-nombre" placeholder="Ej. Yanuncay"></div>
+      <div class="fg"><label class="fl">Orden #</label><input class="fi" type="number" id="zona-orden" value="0" min="0"></div>
+      <div class="fg full" style="flex-direction:row;align-items:center;gap:10px;padding:4px 0">
+        <label class="toggle"><input type="checkbox" id="zona-mostrar"><span class="toggle-slider"></span></label>
+        <span style="font-size:13px;font-weight:500">Mostrar en inicio</span>
+      </div>
+      <div class="fg full"><label class="fl">Imagen</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <img id="zona-img-preview" src="" style="display:none;width:120px;height:68px;object-fit:cover;border-radius:6px;border:1px solid var(--gray-lt)">
+          <div>
+            <input type="file" id="zona-imagen-file" accept="image/*" style="display:none" onchange="previewZonaImagen(this)">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('zona-imagen-file').click()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Subir imagen</button>
+            <div class="fhint" id="zona-img-status">Se sube al guardar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-zona')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarZona()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SERVICIO -->
+<div class="modal-bg" id="modal-servicio-panel">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-servicio-titulo">Nuevo servicio</span>
+      <button class="modal-close" onclick="cerrarModal('modal-servicio-panel')">x</button>
+    </div>
+    <input type="hidden" id="servicio-id">
+    <div class="form-grid">
+      <div class="fg"><label class="fl">Titulo *</label><input class="fi" id="servicio-titulo" placeholder="Ej. Asesoria de compra"></div>
+      <div class="fg"><label class="fl">Icono</label><input class="fi" id="servicio-icono" placeholder="Ej. home, key, chart"></div>
+      <div class="fg full"><label class="fl">Descripcion corta</label><textarea class="fi" id="servicio-desc" rows="2" placeholder="Texto breve visible en la tarjeta..."></textarea></div>
+      <div class="fg full"><label class="fl">Detalle (modal)</label><textarea class="fi" id="servicio-detalle" rows="4" placeholder="Texto completo que aparece al hacer clic..."></textarea></div>
+      <div class="fg"><label class="fl">Orden</label><input class="fi" type="number" id="servicio-orden" value="0" min="0"></div>
+      <div class="fg full">
+        <label class="fl">Foto del servicio</label>
+        <div id="servicio-foto-preview" style="width:100%;height:120px;border:2px dashed var(--gray-lt);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);cursor:pointer" onclick="document.getElementById('servicio-foto-file').click()">
+          <span id="servicio-foto-placeholder" style="font-size:12px;color:var(--gray)">Sin foto — click para seleccionar</span>
+          <img id="servicio-foto-img" src="" style="display:none;width:100%;height:100%;object-fit:cover">
+        </div>
+        <input type="file" id="servicio-foto-file" accept="image/*" style="display:none" onchange="previsualizarFotoServicio(this)">
+        <div class="fhint" style="margin-top:4px">La foto se sube al guardar. Para servicios ya creados la foto se actualiza de inmediato.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-servicio-panel')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar-servicio" onclick="guardarServicioPanel()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = CONFIG.API;
+
+document.addEventListener('DOMContentLoaded', () => {
+  mostrarSeccion('propiedades');
+  cargarTodo();
+});
+
+function toggleSidebar() {
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const isOpen   = sidebar.classList.toggle('open');
+  overlay.classList.toggle('active', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+async function cargarTodo() {
+  await Promise.all([cargarPropiedades(), cargarMensajes(), cargarSectores(), cargarParroquias(), cargarTestimonios(), cargarEquipo()]);
+}
+
+function mostrarSeccion(s) {
+  ['propiedades','proyectos','mensajes','testimonios','equipo','servicios','sectores','whatsapp'].forEach(id => {
+    document.getElementById(`seccion-${id}`).style.display = id===s?'block':'none';
+    document.getElementById(`nav-${id}`)?.classList.toggle('active', id===s);
+  });
+  const t = {
+    propiedades:  ['Propiedades',  'Control de destacadas y gestion'],
+    proyectos:    ['Proyectos',    'Gestiona los proyectos inmobiliarios'],
+    mensajes:     ['Mensajes',     'Consultas de clientes'],
+    testimonios:  ['Testimonios',  'Gestiona los testimonios del sitio'],
+    equipo:       ['Equipo',       'Miembros de la pagina Nosotros'],
+    servicios:    ['Servicios',    'Servicios visibles en la pagina Nosotros'],
+    sectores:     ['Sectores',     'Administra los sectores de cada parroquia'],
+    whatsapp:     ['WhatsApp',     'Configura el boton flotante'],
+  };
+  document.getElementById('topbar-title').textContent = t[s][0];
+  document.getElementById('topbar-sub').textContent   = t[s][1];
+  document.getElementById('topbar-actions').style.display = s==='propiedades'?'block':'none';
+  if (s==='whatsapp') cargarWhatsappConfig();
+  if (s==='proyectos') cargarProyectos();
+  if (s==='servicios') cargarServiciosPanel();
+  if (s==='zonas') cargarZonasPanel();
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+// ── PROYECTOS ─────────────────────────────────────────
+async function cargarProyectos() {
+  try {
+    const res  = await fetch(`${API}/api/proyectos`);
+    const data = await res.json();
+    const tbody = document.getElementById('tbody-proyectos');
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--gray)">No hay proyectos. <a href="nuevo-proyecto.html" style="color:var(--red)">Crear el primero</a></td></tr>'; return; }
+    const estadoClass = {'En planos':'badge-depto','En construccion':'badge-nuevo','Terminado':'badge-leido'};
+    tbody.innerHTML = data.map(p => {
+      const ub  = [p.sector,p.parroquia].filter(Boolean).join(', ')||'—';
+      const img = p.foto_principal ? `<img class="prop-thumb" src="${p.foto_principal}" alt="">` : `<div class="prop-thumb-ph"></div>`;
+      const precio = p.precio_desde ? `$${Number(p.precio_desde).toLocaleString()}` : '—';
+      const unidades = p.unidades ? p.unidades.length : 0;
+      const dispCount = p.unidades ? p.unidades.filter(u=>u.disponible).length : 0;
+      return `<tr>
+        <td>${img}</td>
+        <td><div style="font-weight:600;font-size:12px">${p.titulo}</div><div style="font-size:11px;color:var(--gray)">#${p.id}</div></td>
+        <td><span class="badge ${estadoClass[p.estado]||'badge-casa'}">${p.estado||'—'}</span></td>
+        <td style="font-weight:600;color:var(--red);font-size:12px">${precio}</td>
+        <td style="font-size:12px">${dispCount}/${unidades} disp.</td>
+        <td style="font-size:11px;color:var(--gray)">${ub}</td>
+        <td style="text-align:center">
+          <label class="toggle"><input type="checkbox" ${p.destacado?'checked':''} onchange="toggleDestacadoProyecto(${p.id},this.checked)"><span class="toggle-slider"></span></label>
+        </td>
+        <td><div style="display:flex;gap:5px">
+          <a class="btn btn-secondary" href="editar-proyecto.html?id=${p.id}"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+          <button class="btn btn-danger" onclick="eliminarProyecto(${p.id},'${p.titulo.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  } catch(e) { document.getElementById('tbody-proyectos').innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--gray)">Error cargando proyectos</td></tr>'; }
+}
+
+async function toggleDestacadoProyecto(id, val) {
+  try {
+    await fetch(`${API}/api/proyectos/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({destacado:val?1:0})});
+    toast(val?'Proyecto destacado en inicio':'Proyecto quitado del inicio','ok');
+  } catch(e) { toast('Error','err'); }
+}
+
+async function eliminarProyecto(id, titulo) {
+  if (!confirm(`Eliminar "${titulo}"?`)) return;
+  try { await fetch(`${API}/api/proyectos/${id}`,{method:'DELETE'}); toast('Proyecto eliminado','ok'); cargarProyectos(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── PROPIEDADES ───────────────────────────────────────
+async function cargarPropiedades() {
+  try {
+    const [resProp, resConfig] = await Promise.all([fetch(`${API}/api/propiedades`), fetch(`${API}/api/configuracion`)]);
+    const data = await resProp.json(); const config = await resConfig.json();
+    document.getElementById('stat-total').textContent      = data.length;
+    document.getElementById('stat-destacadas').textContent = data.filter(p=>p.destacada).length;
+    document.getElementById('config-cantidad').value       = config.destacadas_cantidad || 6;
+    const tbody = document.getElementById('tbody-propiedades');
+    if (!data.length) { tbody.innerHTML='<tr><td colspan="13" style="text-align:center;padding:28px;color:var(--gray)">No hay propiedades. <a href="nueva-propiedad.html" style="color:var(--red)">Crear la primera</a></td></tr>'; return; }
+    tbody.innerHTML = data.map(p => {
+      const ub = [p.sector,p.parroquia].filter(Boolean).join(', ') || p.zona || '-';
+      const img = p.foto_principal ? `<img class="prop-thumb" src="${p.foto_principal}" alt="">` : `<div class="prop-thumb-ph"></div>`;
+      const gc = p.gestion==='Departamento'?'badge-depto':p.gestion==='Proyecto'?'badge-proy':'badge-casa';
+      return `<tr>
+        <td>${img}</td>
+        <td><div style="font-weight:600;font-size:12px">${p.titulo}</div><div style="font-size:11px;color:var(--gray)">#${p.id}</div></td>
+        <td style="font-size:11px;color:var(--gray)">${ub}</td>
+        <td style="font-weight:600;color:var(--red);font-size:12px">$${Number(p.precio).toLocaleString()}</td>
+        <td><span class="badge ${p.tipo==='Arriendo'?'badge-arriendo':'badge-venta'}">${p.tipo}</span></td>
+        <td><span class="badge ${gc}">${p.gestion||'-'}</span></td>
+        <td style="font-size:11px">${p.habitaciones||'-'}</td>
+        <td style="font-size:11px">${p.banos||'-'}</td>
+        <td style="font-size:11px">${p.metros?p.metros+'m2':'-'}</td>
+        <td style="font-size:12px;font-weight:600">${p.dueno_nombre||'-'}</td>
+        <td style="font-size:11px">${p.dueno_telefono||'-'}</td>
+        <td style="text-align:center"><label class="toggle"><input type="checkbox" ${p.destacada?'checked':''} onchange="toggleDestacada(${p.id},this.checked)"><span class="toggle-slider"></span></label></td>
+        <td><div style="display:flex;gap:5px">
+          <a class="btn btn-secondary" href="editar-propiedad.html?id=${p.id}"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+          <button class="btn btn-danger" onclick="eliminar(${p.id},'${p.titulo.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  } catch(e) { document.getElementById('tbody-propiedades').innerHTML='<tr><td colspan="13" style="text-align:center;padding:28px;color:var(--gray)">Error cargando</td></tr>'; }
+}
+
+async function toggleDestacada(id, val) {
+  try {
+    const res = await fetch(`${API}/api/propiedades/${id}/destacada`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({destacada:val?1:0})});
+    if (!res.ok) throw new Error();
+    toast(val?'Anadida al inicio':'Quitada del inicio','ok');
+    const r = await fetch(`${API}/api/propiedades`); const d = await r.json();
+    document.getElementById('stat-destacadas').textContent = d.filter(p=>p.destacada).length;
+  } catch(e) { toast('Error actualizando','err'); }
+}
+
+async function guardarConfig() {
+  const val = Number(document.getElementById('config-cantidad').value);
+  if (val<1||val>20) { toast('Numero entre 1 y 20','err'); return; }
+  try {
+    await fetch(`${API}/api/configuracion/destacadas_cantidad`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({valor:String(val)})});
+    toast(`Se mostraran ${val} propiedades en el inicio`,'ok');
+  } catch(e) { toast('Error guardando','err'); }
+}
+
+async function eliminar(id, titulo) {
+  if (!confirm(`Eliminar "${titulo}"?`)) return;
+  try { await fetch(`${API}/api/propiedades/${id}`,{method:'DELETE'}); toast('Propiedad eliminada','ok'); cargarPropiedades(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── MENSAJES ──────────────────────────────────────────
+async function cargarMensajes() {
+  try {
+    const res = await fetch(`${API}/api/mensajes`); const data = await res.json();
+    const nuevos = data.filter(m=>!m.leido).length;
+    document.getElementById('stat-mensajes').textContent = nuevos;
+    const badge = document.getElementById('badge-mensajes');
+    if (nuevos>0) { badge.textContent=nuevos; badge.style.display='inline-block'; }
+    const cont = document.getElementById('lista-mensajes');
+    if (!data.length) { cont.innerHTML='<div style="padding:28px;text-align:center;color:var(--gray);font-size:13px">No hay mensajes</div>'; return; }
+    cont.innerHTML = data.map(m=>`
+      <div class="msg-item">
+        <div class="msg-avatar">${m.nombre?m.nombre[0].toUpperCase():'?'}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:7px"><span class="msg-name">${m.nombre||'Sin nombre'}</span><span class="badge ${m.leido?'badge-leido':'badge-nuevo'}">${m.leido?'Leido':'Nuevo'}</span></div>
+          <div class="msg-text">${m.mensaje||m.interes||'-'}</div>
+          <div class="msg-meta">Email: ${m.email||'-'} &nbsp;|&nbsp; Tel: ${m.telefono||'-'}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          ${!m.leido?`<button class="btn btn-green" onclick="marcarLeido(${m.id})" title="Marcar como leído"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>`:''}
+          <button class="btn btn-danger" onclick="eliminarMensaje(${m.id})" title="Eliminar mensaje"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function marcarLeido(id) {
+  try { await fetch(`${API}/api/mensajes/${id}/leido`,{method:'PUT'}); toast('Marcado como leido','ok'); cargarMensajes(); }
+  catch(e) { toast('Error','err'); }
+}
+
+async function eliminarMensaje(id) {
+  if (!confirm('¿Eliminar este mensaje? Esta acción no se puede deshacer.')) return;
+  try { await fetch(`${API}/api/mensajes/${id}`,{method:'DELETE'}); toast('Mensaje eliminado','ok'); cargarMensajes(); }
+  catch(e) { toast('Error al eliminar','err'); }
+}
+
+// ── TESTIMONIOS ───────────────────────────────────────
+async function cargarTestimonios() {
+  try {
+    const res = await fetch(`${API}/api/testimonios`); const data = await res.json();
+    const grid = document.getElementById('testi-grid');
+    if (!data.length) { grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--gray)">No hay testimonios. Agrega el primero.</div>'; return; }
+    grid.innerHTML = data.map(t => `
+      <div class="testi-item">
+        <div class="testi-stars">${'*'.repeat(t.estrellas||5)}</div>
+        <div class="testi-texto">"${t.texto}"</div>
+        <div class="testi-autor">${t.nombre}</div>
+        <div class="testi-rol">${t.rol||''}</div>
+        <div class="testi-actions">
+          <button class="btn btn-secondary" onclick="editarTestimonio(${t.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
+          <button class="btn btn-danger" onclick="eliminarTestimonio(${t.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+function abrirModalTestimonio() {
+  document.getElementById('testi-id').value = '';
+  document.getElementById('testi-nombre').value = '';
+  document.getElementById('testi-rol').value = '';
+  document.getElementById('testi-texto').value = '';
+  document.getElementById('testi-estrellas').value = 5;
+  document.getElementById('testi-orden').value = 0;
+  document.getElementById('modal-testi-titulo').textContent = 'Nuevo testimonio';
+  document.getElementById('modal-testimonio').classList.add('open');
+}
+
+async function editarTestimonio(id) {
+  try {
+    const res = await fetch(`${API}/api/testimonios`); const data = await res.json();
+    const t = data.find(x=>x.id===id); if (!t) return;
+    document.getElementById('testi-id').value        = t.id;
+    document.getElementById('testi-nombre').value    = t.nombre;
+    document.getElementById('testi-rol').value       = t.rol||'';
+    document.getElementById('testi-texto').value     = t.texto;
+    document.getElementById('testi-estrellas').value = t.estrellas||5;
+    document.getElementById('testi-orden').value     = t.orden||0;
+    document.getElementById('modal-testi-titulo').textContent = 'Editar testimonio';
+    document.getElementById('modal-testimonio').classList.add('open');
+  } catch(e) {}
+}
+
+async function guardarTestimonio() {
+  const id     = document.getElementById('testi-id').value;
+  const nombre = document.getElementById('testi-nombre').value.trim();
+  const texto  = document.getElementById('testi-texto').value.trim();
+  if (!nombre||!texto) { toast('Nombre y texto son obligatorios','err'); return; }
+  const body = { nombre, rol:document.getElementById('testi-rol').value.trim(), texto, estrellas:Number(document.getElementById('testi-estrellas').value)||5, orden:Number(document.getElementById('testi-orden').value)||0, activo:1 };
+  try {
+    if (id) { await fetch(`${API}/api/testimonios/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
+    else    { await fetch(`${API}/api/testimonios`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
+    cerrarModal('modal-testimonio'); toast('Testimonio guardado','ok'); cargarTestimonios();
+  } catch(e) { toast('Error guardando','err'); }
+}
+
+async function eliminarTestimonio(id) {
+  if (!confirm('Eliminar este testimonio?')) return;
+  try { await fetch(`${API}/api/testimonios/${id}`,{method:'DELETE'}); toast('Eliminado','ok'); cargarTestimonios(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── EQUIPO ────────────────────────────────────────────
+async function cargarEquipo() {
+  try {
+    const res = await fetch(`${API}/api/equipo`); const data = await res.json();
+    document.getElementById('stat-equipo').textContent = data.length;
+    const grid = document.getElementById('equipo-grid');
+    if (!data.length) { grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--gray)">No hay miembros. Agrega el primero.</div>'; return; }
+    grid.innerHTML = data.map(m => {
+      const avatar = m.foto_url ? `<img class="equipo-avatar" src="${m.foto_url}" alt="">` : `<div class="equipo-avatar-ph">${m.nombre[0]}</div>`;
+      return `<div class="equipo-item">
+        ${avatar}
+        <div class="equipo-info">
+          <div class="equipo-nombre">${m.nombre}</div>
+          <div class="equipo-cargo">${m.cargo||''}</div>
+          ${m.instagram?`<div class="equipo-ig">${m.instagram}</div>`:''}
+          <div class="equipo-actions">
+            <button class="btn btn-secondary" onclick="editarEquipo(${m.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
+            <button class="btn btn-danger" onclick="eliminarEquipo(${m.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+let equipoFotoFile = null;
+
+function seleccionarFotoEquipo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  equipoFotoFile = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById('equipo-foto-preview').src = url;
+  document.getElementById('equipo-foto-preview').style.display = 'block';
+  document.getElementById('equipo-foto-placeholder').style.display = 'none';
+}
+
+function resetFotoEquipo(urlActual) {
+  equipoFotoFile = null;
+  document.getElementById('equipo-foto-input').value = '';
+  const preview = document.getElementById('equipo-foto-preview');
+  const placeholder = document.getElementById('equipo-foto-placeholder');
+  if (urlActual) {
+    preview.src = urlActual;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    preview.src = '';
+    preview.style.display = 'none';
+    placeholder.style.display = '';
+  }
+}
+
+function abrirModalEquipo() {
+  ['equipo-id','equipo-nombre','equipo-cargo','equipo-desc','equipo-foto','equipo-ig'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('equipo-orden').value = 0;
+  resetFotoEquipo(null);
+  document.getElementById('modal-equipo-titulo').textContent = 'Nuevo miembro';
+  document.getElementById('modal-equipo').classList.add('open');
+}
+
+async function editarEquipo(id) {
+  try {
+    const res = await fetch(`${API}/api/equipo`); const data = await res.json();
+    const m = data.find(x=>x.id===id); if (!m) return;
+    document.getElementById('equipo-id').value     = m.id;
+    document.getElementById('equipo-nombre').value = m.nombre;
+    document.getElementById('equipo-cargo').value  = m.cargo||'';
+    document.getElementById('equipo-desc').value   = m.descripcion||'';
+    document.getElementById('equipo-foto').value   = m.foto_url||'';
+    resetFotoEquipo(m.foto_url||null);
+    document.getElementById('equipo-ig').value     = m.instagram||'';
+    document.getElementById('equipo-orden').value  = m.orden||0;
+    document.getElementById('modal-equipo-titulo').textContent = 'Editar miembro';
+    document.getElementById('modal-equipo').classList.add('open');
+  } catch(e) {}
+}
+
+async function guardarEquipo() {
+  const id     = document.getElementById('equipo-id').value;
+  const nombre = document.getElementById('equipo-nombre').value.trim();
+  if (!nombre) { toast('El nombre es obligatorio','err'); return; }
+  const body = { nombre, cargo:document.getElementById('equipo-cargo').value.trim(), descripcion:document.getElementById('equipo-desc').value.trim(), foto_url:document.getElementById('equipo-foto').value.trim()||null, instagram:document.getElementById('equipo-ig').value.trim()||null, orden:Number(document.getElementById('equipo-orden').value)||0, activo:1 };
+  try {
+    let miembroId = id;
+    if (id) {
+      await fetch(`${API}/api/equipo/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    } else {
+      const res = await fetch(`${API}/api/equipo`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const data = await res.json();
+      miembroId = data.id;
+    }
+    if (equipoFotoFile && miembroId) {
+      const fd = new FormData();
+      fd.append('foto', equipoFotoFile);
+      await fetch(`${API}/api/equipo/${miembroId}/foto`,{method:'POST',body:fd});
+    }
+    cerrarModal('modal-equipo'); toast('Miembro guardado','ok'); cargarEquipo();
+  } catch(e) { toast('Error guardando','err'); }
+}
+
+async function eliminarEquipo(id) {
+  if (!confirm('Eliminar este miembro?')) return;
+  try { await fetch(`${API}/api/equipo/${id}`,{method:'DELETE'}); toast('Eliminado','ok'); cargarEquipo(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── SECTORES ──────────────────────────────────────────
+async function cargarSectores() {
+  try {
+    const res = await fetch(`${API}/api/sectores`); const data = await res.json();
+    const grid = document.getElementById('sectores-grid');
+    if (!data.length) { grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--gray);font-size:13px;padding:16px">No hay sectores.</div>'; return; }
+    grid.innerHTML = data.map(s=>`
+      <div class="sector-item">
+        <div><div class="sector-name">${s.nombre}</div><div class="sector-par">${s.parroquia||'Sin parroquia'}</div></div>
+        <button class="btn btn-danger" style="padding:4px 7px" onclick="eliminarSector(${s.id})"><svg viewBox="0 0 24 24" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function cargarParroquias() {
+  try {
+    const res = await fetch(`${API}/api/parroquias`); const data = await res.json();
+    const sel = document.getElementById('nuevo-parroquia');
+    data.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; sel.appendChild(o); });
+  } catch(e) {}
+}
+
+async function agregarSector() {
+  const nombre = document.getElementById('nuevo-sector').value.trim();
+  const parroquiaId = document.getElementById('nuevo-parroquia').value;
+  if (!nombre) { toast('Escribe el nombre del sector','err'); return; }
+  try {
+    await fetch(`${API}/api/sectores`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,parroquia_id:parroquiaId||null})});
+    document.getElementById('nuevo-sector').value='';
+    toast('Sector agregado','ok'); cargarSectores();
+  } catch(e) { toast('Error','err'); }
+}
+
+async function eliminarSector(id) {
+  if (!confirm('Eliminar este sector?')) return;
+  try { await fetch(`${API}/api/sectores/${id}`,{method:'DELETE'}); toast('Sector eliminado','ok'); cargarSectores(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── WHATSAPP ──────────────────────────────────────────
+async function cargarWhatsappConfig() {
+  try {
+    const res = await fetch(`${API}/api/configuracion`); const c = await res.json();
+    document.getElementById('wa-numero').value  = c.wa_numero  || '';
+    document.getElementById('wa-mensaje').value = c.wa_mensaje || '';
+    if (c.wa_numero) actualizarPreviewWa(c.wa_numero, c.wa_mensaje);
+    if (c.hero_imagen_url) {
+      const prev = document.getElementById('hero-img-preview');
+      prev.src = c.hero_imagen_url; prev.style.display = 'block';
+      document.getElementById('hero-img-status').textContent = 'Imagen actual del hero';
+    }
+  } catch(e) {}
+}
+
+async function guardarWhatsapp() {
+  const numero  = document.getElementById('wa-numero').value.trim().replace(/\D/g,'');
+  const mensaje = document.getElementById('wa-mensaje').value.trim();
+  if (!numero) { toast('Ingresa un numero','err'); return; }
+  try {
+    await Promise.all([
+      fetch(`${API}/api/configuracion/wa_numero`,  {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({valor:numero})}),
+      fetch(`${API}/api/configuracion/wa_mensaje`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({valor:mensaje||'Hola, me interesa una propiedad en Cuencasa'})}),
+    ]);
+    actualizarPreviewWa(numero, mensaje);
+    toast('WhatsApp guardado','ok');
+  } catch(e) { toast('Error','err'); }
+}
+
+async function subirHeroImagen(input) {
+  if (!input.files[0]) return;
+  const status = document.getElementById('hero-img-status');
+  status.textContent = 'Subiendo...';
+  try {
+    const fd = new FormData();
+    fd.append('imagen', input.files[0]);
+    const res  = await fetch(`${API}/api/configuracion/upload-imagen`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.url) {
+      const prev = document.getElementById('hero-img-preview');
+      prev.src = data.url; prev.style.display = 'block';
+      status.textContent = 'Imagen actualizada';
+      toast('Imagen del hero actualizada','ok');
+    } else {
+      status.textContent = 'Error: ' + (data.error || 'desconocido');
+      toast('Error subiendo imagen','err');
+    }
+  } catch(e) { status.textContent = 'Error de conexion'; toast('Error','err'); }
+}
+
+function actualizarPreviewWa(numero, mensaje) {
+  const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje||'Hola')}`;
+  document.getElementById('wa-preview-link').href = link;
+  document.getElementById('wa-preview').style.display = 'block';
+}
+
+// ── ZONAS DEL INICIO ──────────────────────────────────
+let _zonaImagenFile = null;
+
+async function cargarZonasPanel() {
+  try {
+    const res  = await fetch(`${API}/api/parroquias`); const data = await res.json();
+    const list = document.getElementById('zonas-list');
+    if (!data.length) { list.innerHTML='<div style="text-align:center;color:var(--gray);font-size:13px;padding:20px">No hay zonas. Crea la primera.</div>'; return; }
+    list.innerHTML = data.map(z=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--gray-lt);border-radius:10px;background:var(--bg);flex-wrap:wrap">
+        ${z.imagen_url ? `<img src="${z.imagen_url}" style="width:72px;height:48px;object-fit:cover;border-radius:6px;flex-shrink:0">` : `<div style="width:72px;height:48px;border-radius:6px;background:var(--gray-lt);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🏙️</div>`}
+        <div style="flex:1;min-width:120px">
+          <div style="font-weight:700;font-size:13px">${z.nombre}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px">Orden: ${z.orden} · ${z.mostrar_en_inicio ? '<span style="color:var(--green);font-weight:600">Visible en inicio</span>' : 'Oculta'}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="editarZona(${z.id})">Editar</button>
+          <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="eliminarZona(${z.id})">Eliminar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { toast('Error cargando zonas','err'); }
+}
+
+function abrirModalZona(datos) {
+  _zonaImagenFile = null;
+  document.getElementById('zona-id').value      = datos?.id    || '';
+  document.getElementById('zona-nombre').value  = datos?.nombre || '';
+  document.getElementById('zona-orden').value   = datos?.orden  ?? 0;
+  document.getElementById('zona-mostrar').checked = !!datos?.mostrar_en_inicio;
+  document.getElementById('zona-imagen-file').value = '';
+  document.getElementById('zona-img-status').textContent = 'Se sube al guardar';
+  const prev = document.getElementById('zona-img-preview');
+  if (datos?.imagen_url) { prev.src = datos.imagen_url; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+  document.getElementById('modal-zona-titulo').textContent = datos ? 'Editar zona' : 'Nueva zona';
+  document.getElementById('modal-zona').classList.add('open');
+}
+
+function previewZonaImagen(input) {
+  if (!input.files[0]) return;
+  _zonaImagenFile = input.files[0];
+  const prev = document.getElementById('zona-img-preview');
+  prev.src = URL.createObjectURL(_zonaImagenFile);
+  prev.style.display = 'block';
+  document.getElementById('zona-img-status').textContent = 'Lista para subir';
+}
+
+async function editarZona(id) {
+  try {
+    const res = await fetch(`${API}/api/parroquias`); const data = await res.json();
+    const z = data.find(x=>x.id===id);
+    if (z) abrirModalZona(z);
+  } catch(e) { toast('Error','err'); }
+}
+
+async function guardarZona() {
+  const id      = document.getElementById('zona-id').value;
+  const nombre  = document.getElementById('zona-nombre').value.trim();
+  const orden   = Number(document.getElementById('zona-orden').value)||0;
+  const mostrar = document.getElementById('zona-mostrar').checked ? 1 : 0;
+  if (!nombre) { toast('El nombre es obligatorio','err'); return; }
+  try {
+    let url = id ? `${API}/api/parroquias/${id}` : `${API}/api/parroquias`;
+    let method = id ? 'PUT' : 'POST';
+    const res = await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,mostrar_en_inicio:mostrar,orden})});
+    const data = await res.json();
+    const zonaId = id || data.id;
+    if (_zonaImagenFile && zonaId) {
+      document.getElementById('zona-img-status').textContent = 'Subiendo imagen...';
+      const fd = new FormData(); fd.append('imagen', _zonaImagenFile);
+      await fetch(`${API}/api/parroquias/${zonaId}/imagen`,{method:'POST',body:fd});
+    }
+    cerrarModal('modal-zona'); toast('Zona guardada','ok'); cargarZonasPanel();
+  } catch(e) { toast('Error guardando zona','err'); }
+}
+
+async function eliminarZona(id) {
+  if (!confirm('Eliminar esta zona? Tambien dejara de aparecer en los formularios de propiedades.')) return;
+  try { await fetch(`${API}/api/parroquias/${id}`,{method:'DELETE'}); toast('Zona eliminada','ok'); cargarZonasPanel(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── SERVICIOS ─────────────────────────────────────────
+async function cargarServiciosPanel() {
+  try {
+    const res = await fetch(`${API}/api/servicios`); const data = await res.json();
+    const list = document.getElementById('servicios-list');
+    if (!data.length) { list.innerHTML='<div style="text-align:center;color:var(--gray);font-size:13px;padding:16px">No hay servicios. Crea el primero.</div>'; return; }
+    list.innerHTML = data.map(s=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--gray-lt);border-radius:8px;background:var(--bg);gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+          ${s.imagen_url ? `<img src="${s.imagen_url}" style="width:56px;height:56px;object-fit:cover;border-radius:6px;flex-shrink:0">` : `<div style="width:56px;height:56px;border-radius:6px;background:var(--gray-lt);flex-shrink:0;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--gray)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
+          <div style="min-width:0">
+            <div style="font-weight:700;font-size:14px">${s.titulo}</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.descripcion||''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-secondary" style="padding:4px 8px;font-size:12px" onclick="editarServicioPanel(${s.id})">Editar</button>
+          <button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="eliminarServicioPanel(${s.id})">Eliminar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { toast('Error cargando servicios','err'); }
+}
+
+function previsualizarFotoServicio(input) {
+  if (!input.files?.[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('servicio-foto-img').src = e.target.result;
+    document.getElementById('servicio-foto-img').style.display = 'block';
+    document.getElementById('servicio-foto-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function abrirModalServicioPanel(datos) {
+  document.getElementById('servicio-id').value     = datos?.id    || '';
+  document.getElementById('servicio-titulo').value = datos?.titulo || '';
+  document.getElementById('servicio-icono').value  = datos?.icono  || '';
+  document.getElementById('servicio-desc').value   = datos?.descripcion || '';
+  document.getElementById('servicio-detalle').value= datos?.detalle || '';
+  document.getElementById('servicio-orden').value  = datos?.orden ?? 0;
+  document.getElementById('servicio-foto-file').value = '';
+  const img = document.getElementById('servicio-foto-img');
+  const ph  = document.getElementById('servicio-foto-placeholder');
+  if (datos?.imagen_url) {
+    img.src = datos.imagen_url; img.style.display = 'block'; ph.style.display = 'none';
+  } else {
+    img.src = ''; img.style.display = 'none'; ph.style.display = '';
+  }
+  document.getElementById('modal-servicio-titulo').textContent = datos ? 'Editar servicio' : 'Nuevo servicio';
+  document.getElementById('modal-servicio-panel').classList.add('open');
+}
+
+async function editarServicioPanel(id) {
+  try {
+    const res = await fetch(`${API}/api/servicios`); const data = await res.json();
+    const s = data.find(x=>x.id===id);
+    if (s) abrirModalServicioPanel(s);
+  } catch(e) { toast('Error','err'); }
+}
+
+async function guardarServicioPanel() {
+  const id      = document.getElementById('servicio-id').value;
+  const titulo  = document.getElementById('servicio-titulo').value.trim();
+  const icono   = document.getElementById('servicio-icono').value.trim();
+  const desc    = document.getElementById('servicio-desc').value.trim();
+  const detalle = document.getElementById('servicio-detalle').value.trim();
+  const orden   = Number(document.getElementById('servicio-orden').value)||0;
+  if (!titulo) { toast('El titulo es obligatorio','err'); return; }
+  const btn = document.getElementById('btn-guardar-servicio');
+  btn.disabled = true;
+  try {
+    const url    = id ? `${API}/api/servicios/${id}` : `${API}/api/servicios`;
+    const method = id ? 'PUT' : 'POST';
+    const resGuardar = await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,icono,descripcion:desc,detalle,orden})});
+    const savedData = await resGuardar.json();
+    const servicioId = id || savedData.id;
+    const file = document.getElementById('servicio-foto-file').files?.[0];
+    if (file && servicioId) {
+      const fd = new FormData(); fd.append('imagen', file);
+      await fetch(`${API}/api/servicios/${servicioId}/imagen`,{method:'POST',body:fd});
+    }
+    cerrarModal('modal-servicio-panel'); toast('Servicio guardado','ok'); cargarServiciosPanel();
+  } catch(e) { toast('Error guardando','err'); }
+  finally { btn.disabled = false; }
+}
+
+async function eliminarServicioPanel(id) {
+  if (!confirm('Eliminar este servicio?')) return;
+  try { await fetch(`${API}/api/servicios/${id}`,{method:'DELETE'}); toast('Servicio eliminado','ok'); cargarServiciosPanel(); }
+  catch(e) { toast('Error','err'); }
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
+
+function toast(msg,tipo='') {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast ${tipo} show`;
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>

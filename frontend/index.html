@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="config.js"></script>
+  <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/da2xskien/image/upload/v1777507199/WhatsApp_Image_2026-04-29_at_17.54.30_fvkdq2.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuencasa – Bienes Raíces en Cuenca</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--charcoal); overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 20px 60px; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(200,16,46,0.08); transition: box-shadow .3s; }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.08); }
+    .logo { display: flex; align-items: center; }
+    .logo img { height: 80px; max-width: 220px; width: 100%; object-fit: contain; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--red); }
+    .nav-cta { background: var(--red) !important; color: var(--white) !important; padding: 10px 22px; border-radius: 6px; font-weight: 600 !important; font-size: 13px !important; transition: background .2s !important; }
+    .nav-cta:hover { background: var(--red-dark) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 101; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--charcoal); border-radius: 2px; transition: all .3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .hero { min-height: 100vh; position: relative; display: flex; align-items: center; padding-top: 72px; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1800&q=85'); background-size: cover; background-position: center; background-repeat: no-repeat; transform: scale(1.04); transition: transform 8s ease; }
+    .hero:hover .hero-bg { transform: scale(1.0); }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(200,16,46,0.72) 0%, rgba(200,16,46,0.45) 35%, rgba(28,28,30,0.15) 100%); }
+    .hero-content { position: relative; z-index: 2; padding: 80px 80px; max-width: 1000px; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.9); font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px; border-radius: 100px; margin-bottom: 32px; animation: fadeUp .8s ease both; }
+    .eyebrow-dot { width: 6px; height: 6px; background: var(--white); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);} }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(52px,7vw,96px); font-weight: 400; line-height: 1.0; letter-spacing: -2px; color: var(--white); margin-bottom: 20px; animation: fadeUp .8s .1s ease both; }
+    .hero-title strong { font-weight: 900; display: block; }
+    .hero-sub { font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 40px; font-weight: 400; animation: fadeUp .8s .2s ease both; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--white); color: var(--red); padding: 16px 36px; border-radius: 4px; font-size: 20px; font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px; transition: all .3s; animation: fadeUp .8s .3s ease both; }
+    .hero-cta:hover { background: var(--red); color: var(--white); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,16,46,0.4); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);} }
+    .section { padding: 100px 80px; }
+    .section-alt { background: var(--white); }
+    .section-red { background: var(--red); }
+    .s-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--red); margin-bottom: 12px; }
+    .section-red .s-eyebrow { color: rgba(255,255,255,0.7); }
+    .s-title { font-family: 'Playfair Display', serif; font-size: clamp(30px,3.5vw,46px); font-weight: 900; line-height: 1.1; letter-spacing: -1px; color: var(--charcoal); margin-bottom: 16px; }
+    .section-red .s-title { color: var(--white); }
+    .s-title em { color: var(--red); font-style: italic; }
+    .s-sub { font-size: 16px; color: var(--gray); max-width: 520px; line-height: 1.7; }
+    .divider { width: 48px; height: 3px; background: var(--red); border-radius: 2px; margin: 20px 0 32px; }
+    /* CARDS PROPIEDADES */
+    .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+    .card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); transition: transform .3s, box-shadow .3s; cursor: pointer; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+    .card-img-wrap { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--gray-light); }
+    .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .card:hover .card-img { transform: scale(1.05); }
+    .card-img-placeholder { width: 100%; height: 100%; }
+    .card-badge { position: absolute; top: 14px; left: 14px; background: var(--red); color: var(--white); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 5px 12px; border-radius: 6px; }
+    .card-badge.arriendo { background: #185FA5; }
+    .card-fav { position: absolute; top: 12px; right: 14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; border: none; }
+    .card-fav:hover { background: var(--red); }
+    .card-fav:hover svg { stroke: white; }
+    .card-fav svg { width: 16px; height: 16px; stroke: #C8102E; fill: none; stroke-width: 2; }
+    .card-body { padding: 20px; }
+    .card-price { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--red); margin-bottom: 6px; }
+    .card-name { font-size: 15px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+    .card-loc { font-size: 13px; color: var(--gray); display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+    .card-loc svg { width: 12px; height: 12px; stroke: var(--red); fill: none; stroke-width: 2; flex-shrink: 0; }
+    .card-features { display: flex; gap: 16px; border-top: 1px solid var(--gray-light); padding-top: 14px; }
+    .feat { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--gray); font-weight: 500; }
+    .feat svg { width: 14px; height: 14px; stroke: var(--gray); fill: none; stroke-width: 2; }
+    .ph-1 { background: linear-gradient(135deg,#d4a5a5,#8b4040); }
+    .ph-2 { background: linear-gradient(135deg,#a5b4d4,#405d8b); }
+    .ph-3 { background: linear-gradient(135deg,#a5d4b4,#408b54); }
+    .ph-4 { background: linear-gradient(135deg,#d4c5a5,#8b7040); }
+    .ph-5 { background: linear-gradient(135deg,#c5a5d4,#70408b); }
+    .ph-6 { background: linear-gradient(135deg,#d4a5c5,#8b4060); }
+    .loading-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+    .skeleton { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .skeleton-img { aspect-ratio: 4/3; background: linear-gradient(90deg,var(--gray-light) 25%,#f0ece8 50%,var(--gray-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skeleton-body { padding: 20px; }
+    .skeleton-line { height: 14px; background: linear-gradient(90deg,var(--gray-light) 25%,#f0ece8 50%,var(--gray-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 10px; }
+    .skeleton-line.short { width: 60%; }
+    @keyframes shimmer { 0%{background-position:200% 0;}100%{background-position:-200% 0;} }
+    .empty-state { text-align: center; padding: 60px 20px; grid-column: 1/-1; }
+    .empty-state p { font-size: 16px; color: var(--gray); }
+    /* CARDS PROYECTOS */
+    .proyectos-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+    .proyecto-card { background: var(--charcoal); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.1); transition: transform .3s, box-shadow .3s; cursor: pointer; position: relative; }
+    .proyecto-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
+    .proyecto-img-wrap { position: relative; aspect-ratio: 16/10; overflow: hidden; background: var(--charcoal); }
+    .proyecto-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; display: block; }
+    .proyecto-card:hover .proyecto-img { transform: scale(1.05); }
+    .proyecto-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,28,30,0.9) 0%, rgba(28,28,30,0.2) 60%, transparent 100%); }
+    .proyecto-estado { position: absolute; top: 14px; left: 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 5px; color: var(--white); }
+    .estado-planos { background: #6c63ff; }
+    .estado-construccion { background: #f39c12; }
+    .estado-terminado { background: var(--green); }
+    .proyecto-body { padding: 18px 20px 20px; }
+    .proyecto-precio { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--red); margin-bottom: 4px; }
+    .proyecto-nombre { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .proyecto-loc { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+    .proyecto-loc svg { width: 11px; height: 11px; stroke: var(--red); fill: none; stroke-width: 2; }
+    .proyecto-feats { display: flex; gap: 12px; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .proyecto-feat { font-size: 11px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 4px; }
+    .proyecto-feat svg { width: 12px; height: 12px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 2; }
+    .proy-sk { background: linear-gradient(90deg,#2a2a2c 25%,#333 50%,#2a2a2c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 16px; aspect-ratio: 16/10; }
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 56px; }
+    .feature-item { text-align: center; }
+    .feat-icon { width: 64px; height: 64px; border-radius: 16px; background: var(--red-pale); border: 1.5px solid rgba(200,16,46,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; transition: all .3s; }
+    .feature-item:hover .feat-icon { background: var(--red); border-color: var(--red); }
+    .feature-item:hover .feat-icon svg { stroke: white; }
+    .feat-icon svg { width: 28px; height: 28px; stroke: var(--red); fill: none; stroke-width: 1.5; transition: .3s; }
+    .feat-title { font-size: 16px; font-weight: 700; color: var(--charcoal); margin-bottom: 8px; }
+    .feat-desc { font-size: 14px; color: var(--gray); line-height: 1.6; }
+    /* ZONAS */
+    .zones-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 56px; }
+    .zone-card { border-radius: 14px; overflow: hidden; position: relative; aspect-ratio: 3/4; cursor: pointer; transition: transform .3s; }
+    .zone-card:hover { transform: scale(1.02); }
+    .zone-card:first-child { grid-row: span 2; aspect-ratio: auto; }
+    .z1 { background: linear-gradient(160deg,#8B2030,#E8203E); }
+    .z2 { background: linear-gradient(160deg,#2C3E50,#405580); }
+    .z3 { background: linear-gradient(160deg,#1a5c30,#2e7d45); }
+    .z4 { background: linear-gradient(160deg,#5c3d1a,#8b5e2a); }
+    .z5 { background: linear-gradient(160deg,#3d1a5c,#5e2a8b); }
+    .zone-bg { width: 100%; height: 100%; display: block; }
+    .zone-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; transition: background .3s; }
+    .zone-card:hover .zone-overlay { background: linear-gradient(to top,rgba(200,16,46,0.7) 0%,transparent 70%); }
+    .zone-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .zone-card:first-child .zone-name { font-size: 28px; }
+    .zone-count { font-size: 13px; color: rgba(255,255,255,0.75); }
+    /* TESTIMONIOS */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+    .testi-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 28px; transition: background .3s; }
+    .testi-card:hover { background: rgba(255,255,255,0.16); }
+    .stars { color: #FFD700; font-size: 14px; margin-bottom: 14px; letter-spacing: 2px; }
+    .testi-text { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.88); font-style: italic; margin-bottom: 20px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--white); font-size: 16px; }
+    .testi-name { font-weight: 700; color: var(--white); font-size: 14px; }
+    .testi-role { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+    /* CTA */
+    .cta-section { background: var(--charcoal); padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; position: relative; overflow: hidden; scroll-margin-top: 88px; }
+    .cta-section::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle,var(--red-light) 0%,transparent 70%); opacity: .15; }
+    .cta-title { font-family: 'Playfair Display', serif; font-size: clamp(32px,4vw,52px); font-weight: 900; color: var(--white); line-height: 1.1; letter-spacing: -1.5px; }
+    .cta-title em { color: var(--red); font-style: italic; }
+    .cta-sub { font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-top: 16px; }
+    .cta-form { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+    .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .cta-input { padding: 15px 18px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color .2s; }
+    .cta-input::placeholder { color: rgba(255,255,255,0.35); }
+    .cta-input:focus { border-color: var(--red); }
+    .cta-submit { padding: 16px; border-radius: 10px; background: var(--red); color: var(--white); border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; transition: background .2s, transform .2s; }
+    .cta-submit:hover { background: var(--red-light); transform: translateY(-1px); }
+    .form-msg { font-size: 13px; text-align: center; padding: 10px; border-radius: 8px; display: none; }
+    .form-msg.ok { background: rgba(30,126,52,0.2); color: #4ade80; display: block; }
+    .form-msg.err { background: rgba(200,16,46,0.2); color: #fca5a5; display: block; }
+    footer { background: #111; padding: 60px 80px 32px; color: rgba(255,255,255,0.5); }
+    .footer-top{display:flex;flex-wrap:wrap;gap:48px;justify-content:space-between;margin-bottom:48px;} .footer-top > div:first-child{flex:1 1 280px;} .footer-col{flex:1 1 160px;min-width:160px;}
+    .footer-logo { display: flex; align-items: center; margin-bottom: 14px; }
+    .footer-logo img { height: 60px; max-width: 200px; object-fit: contain; filter: brightness(0) invert(1); }
+    .footer-desc { font-size: 14px; line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--white); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 14px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--red); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .footer-social{display:flex;gap:20px;align-items:center;}
+    .social-link{color:rgba(255,255,255,0.5);transition:color .2s;display:flex;}
+    .social-link:hover{color:var(--red);}
+    .view-all-wrap { text-align: center; margin-top: 48px; }
+    .btn-outline { display: inline-flex; align-items: center; gap: 10px; border: 2px solid var(--red); color: var(--red); padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; transition: all .2s; cursor: pointer; background: transparent; font-family: 'DM Sans', sans-serif; }
+    .btn-outline:hover { background: var(--red); color: var(--white); }
+    .btn-outline-white { display: inline-flex; align-items: center; gap: 10px; border: 2px solid rgba(255,255,255,0.3); color: var(--white); padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; transition: all .2s; }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.4); transition: transform .2s, box-shadow .2s; text-decoration: none; }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; }
+    .wa-tooltip { position: absolute; right: 64px; background: var(--charcoal); color: var(--white); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .wa-float:hover .wa-tooltip { opacity: 1; }
+    .wa-tooltip::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 5px solid var(--charcoal); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+    @media(max-width:900px) {
+      nav { padding: 16px 24px; }
+      .hamburger { display: flex; }
+      .nav-links { display: flex; flex-direction: column; position: fixed; top: 0; left: 0; right: 0; background: var(--white); padding: 90px 32px 40px; gap: 0; transform: translateY(-100%); transition: transform .35s cubic-bezier(.4,0,.2,1); box-shadow: 0 8px 32px rgba(0,0,0,0.12); z-index: 99; }
+      .nav-links.open { transform: translateY(0); }
+      .nav-links li { border-bottom: 1px solid var(--gray-light); }
+      .nav-links li:last-child { border-bottom: none; margin-top: 16px; }
+      .nav-links a { display: block !important; padding: 16px 0 !important; font-size: 18px !important; color: var(--charcoal) !important; }
+      .nav-links a:hover { color: var(--red) !important; }
+      .nav-cta { display: block !important; text-align: center !important; padding: 14px 22px !important; border-radius: 8px !important; font-size: 16px !important; }
+      .hero-content { padding: 60px 24px 80px; }
+      .hero-title { font-size: clamp(44px,10vw,72px); }
+      .section { padding: 60px 24px; }
+      .cards-grid, .loading-grid, .features-grid, .zones-grid, .testimonials-grid, .proyectos-grid { grid-template-columns: 1fr; }
+      .cta-section { grid-template-columns: 1fr; padding: 60px 24px; }
+      .footer-top { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; gap: 16px; align-items: center; }
+      footer { padding: 40px 24px 24px; }
+      .cta-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <a class="logo" href="index.html" onclick="window.location.href='index.html';return false;">
+      <img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Logo Cuencasa">
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="propiedades.html">Propiedades</a></li>
+      <li><a href="proyectos.html">Proyectos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="#contacto" class="nav-cta">Hablar con un asesor</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="eyebrow-dot"></span>Cuenca, Ecuador · Bienes Raices</div>
+      <h1 class="hero-title">Tu<br><strong>siguiente hogar</strong>con nosotros</h1>
+      <p class="hero-sub">Asesoria experta y listados exclusivos</p>
+      <a class="hero-cta" href="propiedades.html">Descubrir propiedades</a>
+    </div>
+  </section>
+
+  <!-- PROPIEDADES DESTACADAS -->
+  <section class="section" id="propiedades">
+    <div class="reveal">
+      <div class="s-eyebrow">Propiedades destacadas</div>
+      <h2 class="s-title">Las mejores <em>oportunidades</em><br>de Cuenca</h2>
+      <div class="divider"></div>
+      <p class="s-sub">Seleccionadas y verificadas por nuestros asesores. Actualizadas en tiempo real.</p>
+    </div>
+    <div class="loading-grid" id="loading-grid">
+      <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+      <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+      <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    </div>
+    <div class="cards-grid" id="cards-grid" style="display:none;margin-top:56px;"></div>
+    <div class="view-all-wrap reveal">
+      <a class="btn-outline" href="propiedades.html">Ver todas las propiedades <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+  </section>
+
+  <!-- PROYECTOS DESTACADOS -->
+  <section class="section section-alt" id="proyectos-home">
+    <div class="reveal">
+      <div class="s-eyebrow">Proyectos inmobiliarios</div>
+      <h2 class="s-title">Invierte en los mejores <em>proyectos</em><br>de Cuenca</h2>
+      <div class="divider"></div>
+      <p class="s-sub">Proyectos residenciales y comerciales en preventa, construccion y entrega inmediata.</p>
+    </div>
+    <div class="proyectos-grid" id="proyectos-grid">
+      <div class="proy-sk"></div><div class="proy-sk"></div><div class="proy-sk"></div>
+    </div>
+    <div class="view-all-wrap reveal">
+      <a class="btn-outline" href="proyectos.html">Ver todos los proyectos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+  </section>
+
+  <!-- POR QUE NOSOTROS -->
+  <section class="section" id="nosotros">
+    <div class="reveal" style="text-align:center">
+      <div class="s-eyebrow" style="text-align:center">Por que Cuencasa?</div>
+      <h2 class="s-title" style="text-align:center">Tu confianza, nuestra <em>prioridad</em></h2>
+      <div class="divider" style="margin:20px auto 0"></div>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feature-item"><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="feat-title">100% verificado</div><div class="feat-desc">Cada propiedad pasa por verificacion legal y fisica antes de publicarse.</div></div>
+      <div class="feature-item"><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="feat-title">Asesores locales</div><div class="feat-desc">Conocemos Cuenca al detalle. Nuestro equipo nacio y crecio aqui.</div></div>
+      <div class="feature-item"><div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="feat-title">Respuesta rapida</div><div class="feat-desc">Contestamos en menos de 2 horas. Visitas coordinadas el mismo dia.</div></div>
+      <div class="feature-item"><div class="feat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="feat-title">Sin sorpresas</div><div class="feat-desc">Precios claros, sin comisiones ocultas. Acompanamiento hasta la firma.</div></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="section section-red">
+    <div class="reveal" style="text-align:center">
+      <div class="s-eyebrow">Testimonios</div>
+      <h2 class="s-title" style="text-align:center;color:#fff">Lo que dicen nuestros <em style="color:rgba(255,255,255,0.7)">clientes</em></h2>
+      <div class="divider" style="background:rgba(255,255,255,0.4);margin:20px auto 0"></div>
+    </div>
+    <div class="testimonials-grid reveal" id="testimonials-grid"></div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="cta-section" id="contacto">
+    <div class="reveal">
+      <div class="s-eyebrow" style="color:rgba(255,255,255,0.5)">Listo para dar el paso?</div>
+      <h2 class="cta-title">Hablemos de tu<br>proxima <em>propiedad</em></h2>
+      <p class="cta-sub">Un asesor personal te contactara en menos de 2 horas. Sin compromiso, sin presiones.</p>
+    </div>
+    <div class="cta-form reveal">
+      <div class="cta-row">
+        <input class="cta-input" type="text" id="f-nombre" placeholder="Tu nombre completo">
+        <input class="cta-input" type="tel" id="f-telefono" placeholder="Tu telefono / WhatsApp">
+      </div>
+      <input class="cta-input" type="email" id="f-email" placeholder="Correo electronico">
+      <select class="cta-input" id="f-interes">
+        <option value="">Que estas buscando?</option>
+        <option>Comprar una casa</option>
+        <option>Comprar un departamento</option>
+        <option>Arrendar una propiedad</option>
+        <option>Vender mi propiedad</option>
+        <option>Invertir en bienes raices</option>
+      </select>
+      <textarea class="cta-input" id="f-mensaje" rows="3" placeholder="Cuentanos mas sobre lo que necesitas..."></textarea>
+      <button class="cta-submit" onclick="enviarMensaje()">Quiero que me contacten</button>
+      <div class="form-msg" id="form-msg"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo"><img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Cuencasa"></div>
+        <p class="footer-desc">La plataforma de bienes raices mas confiable de Cuenca, Ecuador.</p>
+      </div>
+      <div class="footer-col"><h4>Propiedades</h4><ul><li><a href="propiedades.html">Todas las propiedades</a></li><li><a href="propiedades.html?tipo=Venta">Casas en venta</a></li><li><a href="propiedades.html?tipo=Arriendo">Arriendos</a></li></ul></div>
+      <div class="footer-col"><h4>Cuencasa</h4><ul><li><a href="nosotros.html">Nosotros</a></li><li><a href="proyectos.html">Proyectos</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>2026 Cuencasa · Cuenca, Ecuador</span>
+      <div class="footer-social">
+      <a href="https://www.facebook.com/profile.php?id=61569156524239" target="_blank" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="https://www.instagram.com/cuencasa.agencia/" target="_blank" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+      <a href="https://www.tiktok.com/@cuencasa.agencia" target="_blank" class="social-link" aria-label="TikTok"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.19 8.19 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg></a>
+      <a href="mailto:agenciacuencasa@gmail.com" class="social-link" aria-label="Email"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+    </div>
+    </div>
+  </footer>
+
+  <a class="wa-float" id="wa-btn" href="#" target="_blank" aria-label="WhatsApp">
+    <span class="wa-tooltip">Necesitas ayuda?</span>
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    const API = CONFIG.API;
+    const colores = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
+
+    async function cargarPropiedades() {
+      const grid = document.getElementById('cards-grid');
+      const loadingEl = document.getElementById('loading-grid');
+      grid.style.display = 'none'; loadingEl.style.display = 'grid';
+      try {
+        const [resConfig, resProp] = await Promise.all([fetch(`${API}/api/configuracion`), fetch(`${API}/api/propiedades?destacadas=1`)]);
+        const config = await resConfig.json(); const data = await resProp.json();
+        const cant = Number(config.destacadas_cantidad || 6);
+        loadingEl.style.display = 'none'; grid.style.display = 'grid';
+        if (!data.length) { grid.innerHTML = `<div class="empty-state"><p>No hay propiedades destacadas.</p></div>`; return; }
+        const limitadas = data.slice(0, cant);
+        grid.innerHTML = limitadas.map((p, i) => crearCard(p, i)).join('');
+      } catch (err) {
+        loadingEl.style.display = 'none'; grid.style.display = 'grid';
+        grid.innerHTML = `<div class="empty-state"><p>No se pudo conectar.</p></div>`;
+      }
+    }
+
+    async function cargarProyectosDestacados() {
+      const grid = document.getElementById('proyectos-grid');
+      try {
+        const res  = await fetch(`${API}/api/proyectos`);
+        const data = await res.json();
+        const destacados = data.filter(p => p.destacado);
+        if (!destacados.length) {
+          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>No hay proyectos destacados.</p></div>`;
+          return;
+        }
+        const estadoClass = {'En planos':'estado-planos','En construccion':'estado-construccion','Terminado':'estado-terminado'};
+        grid.innerHTML = destacados.map((p, i) => {
+          const precio = p.precio_desde ? `Desde $${Number(p.precio_desde).toLocaleString()}` : 'Consultar precio';
+          const ub = [p.sector, p.parroquia].filter(Boolean).join(', ') || 'Cuenca';
+          const imgHtml = p.foto_principal
+            ? `<img class="proyecto-img" src="${p.foto_principal}" alt="${p.titulo}" loading="lazy">`
+            : `<div class="proyecto-img" style="background:linear-gradient(135deg,#1C1C1E,#C8102E)"></div>`;
+          const unidadesDisp = p.unidades ? p.unidades.filter(u=>u.disponible).length : 0;
+          return `<div class="proyecto-card" onclick="window.location.href='proyecto.html?id=${p.id}'">
+            <div class="proyecto-img-wrap">
+              ${imgHtml}
+              <div class="proyecto-img-overlay"></div>
+              <span class="proyecto-estado ${estadoClass[p.estado]||'estado-terminado'}">${p.estado||'Terminado'}</span>
+            </div>
+            <div class="proyecto-body">
+              <div class="proyecto-precio">${precio}</div>
+              <div class="proyecto-nombre">${p.titulo}</div>
+              <div class="proyecto-loc"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${ub}</div>
+              <div class="proyecto-feats">
+                ${p.plantas ? `<span class="proyecto-feat"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>${p.plantas} pisos</span>` : ''}
+                ${unidadesDisp ? `<span class="proyecto-feat"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>${unidadesDisp} unid. disp.</span>` : ''}
+                ${p.entrega ? `<span class="proyecto-feat"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Entrega ${p.entrega}</span>` : ''}
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>Error cargando proyectos.</p></div>`;
+      }
+    }
+
+    async function cargarWhatsapp() {
+      try {
+        const res = await fetch(`${API}/api/configuracion`); const c = await res.json();
+        const num = c.wa_numero||'593999999999'; const msg = c.wa_mensaje||'Hola, me interesa una propiedad en Cuencasa';
+        document.getElementById('wa-btn').href = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+        if (c.hero_imagen_url) {
+          const heroBg = document.querySelector('.hero-bg');
+          if (heroBg) heroBg.style.backgroundImage = `url(${c.hero_imagen_url})`;
+        }
+      } catch(e) { const btn=document.getElementById('wa-btn'); if(btn)btn.href='https://wa.me/593999999999'; }
+    }
+
+    async function cargarTestimonios() {
+      try {
+        const res = await fetch(`${API}/api/testimonios`); const data = await res.json();
+        const grid = document.getElementById('testimonials-grid');
+        if (!data.length) { grid.style.display='none'; return; }
+        grid.innerHTML = data.map(t=>`
+          <div class="testi-card">
+            <div class="stars">${Array.from({length:t.estrellas||5},()=>'<svg viewBox="0 0 24 24" width="14" height="14" fill="#FFD700" stroke="#FFD700" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>').join('')}</div>
+            <div class="testi-text">"${t.texto}"</div>
+            <div class="testi-author">
+              <div class="testi-avatar">${t.nombre[0].toUpperCase()}</div>
+              <div><div class="testi-name">${t.nombre}</div><div class="testi-role">${t.rol||''}</div></div>
+            </div>
+          </div>`).join('');
+        observer.observe(grid);
+      } catch(e) {}
+    }
+
+    function crearCard(p, i) {
+      const precio = Number(p.precio).toLocaleString();
+      const color  = colores[i % colores.length];
+      const badgeClass = p.tipo === 'Arriendo' ? 'card-badge arriendo' : 'card-badge';
+      const precioLabel = p.tipo === 'Arriendo' ? `$${precio}<span style="font-size:14px;font-weight:400;color:var(--gray)">/mes</span>` : `$${precio}`;
+      const imgHtml = p.foto_principal ? `<img class="card-img" src="${p.foto_principal}" alt="${p.titulo}" loading="lazy">` : `<div class="card-img-placeholder ${color}"></div>`;
+      const ubicacion = [p.sector, p.parroquia].filter(Boolean).join(', ') || p.zona || 'Cuenca';
+      return `<div class="card" onclick="verPropiedad(${p.id})">
+        <div class="card-img-wrap">${imgHtml}<span class="${badgeClass}">${p.tipo}</span>
+          <button class="card-fav" onclick="event.stopPropagation();toggleFav(this)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+        <div class="card-body">
+          <div class="card-price">${precioLabel}</div>
+          <div class="card-name">${p.titulo}</div>
+          <div class="card-loc"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${ubicacion}</div>
+          <div class="card-features">
+            ${p.habitaciones?`<div class="feat"><svg viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>${p.habitaciones} hab.</div>`:''}
+            ${p.banos?`<div class="feat"><svg viewBox="0 0 24 24"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>${p.banos} banos</div>`:''}
+            ${p.metros?`<div class="feat"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>${p.metros}m2</div>`:''}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function verPropiedad(id) { window.location.href=`propiedad.html?id=${id}`; }
+    function toggleFav(btn) { const svg=btn.querySelector('svg'); svg.style.fill=svg.style.fill==='var(--red)'?'none':'var(--red)'; }
+
+    async function enviarMensaje() {
+      const nombre=document.getElementById('f-nombre').value.trim(); const email=document.getElementById('f-email').value.trim();
+      const msgEl=document.getElementById('form-msg');
+      if (!nombre||!email) { msgEl.textContent='Completa tu nombre y correo.'; msgEl.className='form-msg err'; return; }
+      try {
+        const res = await fetch(`${API}/api/mensajes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,email,telefono:document.getElementById('f-telefono').value.trim(),interes:document.getElementById('f-interes').value,mensaje:document.getElementById('f-mensaje').value.trim()})});
+        if (res.ok) { msgEl.textContent='Mensaje enviado! Te contactaremos pronto.'; msgEl.className='form-msg ok'; ['f-nombre','f-email','f-telefono','f-interes','f-mensaje'].forEach(id=>document.getElementById(id).value=''); }
+        else throw new Error();
+      } catch { msgEl.textContent='Error al enviar. Intenta de nuevo.'; msgEl.className='form-msg err'; }
+    }
+
+    function toggleMenu() {
+      const h=document.getElementById('hamburger'); const n=document.getElementById('nav-links');
+      h.classList.toggle('open'); n.classList.toggle('open');
+      document.body.style.overflow=n.classList.contains('open')?'hidden':'';
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => { document.getElementById('hamburger').classList.remove('open'); document.getElementById('nav-links').classList.remove('open'); document.body.style.overflow=''; });
+    });
+    window.addEventListener('scroll', () => { document.getElementById('nav').classList.toggle('scrolled', scrollY > 40); });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(()=>e.target.classList.add('visible'), i*80); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+
+    cargarPropiedades();
+    cargarProyectosDestacados();
+    cargarWhatsapp();
+    cargarTestimonios();
+  </script>
+</body>
+</html>

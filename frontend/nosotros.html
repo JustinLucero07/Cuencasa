@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="config.js"></script>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/da2xskien/image/upload/v1777507199/WhatsApp_Image_2026-04-29_at_17.54.30_fvkdq2.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuencasa – Nosotros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#C8102E; --red-dark:#9B0C22; --red-pale:#FFF0F2; --white:#FFFFFF; --off-white:#FAF8F6; --charcoal:#1C1C1E; --gray:#6B6B6B; --gray-lt:#E8E4E1; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--charcoal);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,16,46,0.08);box-shadow:0 2px 24px rgba(0,0,0,0.06);}
+    .logo { display: flex; align-items: center; }
+    .logo img { height: 80px; max-width: 220px; width: 100%; object-fit: contain; }
+  .nav-links{display:flex;gap:32px;list-style:none;align-items:center;}
+  .nav-links a{font-size:14px;font-weight:500;color:var(--gray);text-decoration:none;transition:color .2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--red);}
+  .nav-cta{background:var(--red)!important;color:var(--white)!important;padding:10px 22px;border-radius:6px;font-weight:600!important;}
+  .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;z-index:101;}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--charcoal);border-radius:2px;transition:all .3s;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .hero{min-height:50vh;display:flex;align-items:center;justify-content:center;background:var(--charcoal);position:relative;overflow:hidden;padding:120px 40px 80px;}
+  .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#C8102E 0%,#9B0C22 40%,#1C1C1E 100%);opacity:0.85;}
+  .hero-pattern{position:absolute;inset:0;opacity:0.04;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.5) 40px,rgba(255,255,255,0.5) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,0.5) 40px,rgba(255,255,255,0.5) 41px);}
+  .hero-content{position:relative;z-index:1;text-align:center;max-width:700px;}
+  .hero-eyebrow{display:inline-block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:8px 20px;border-radius:100px;margin-bottom:24px;animation:fadeUp .8s ease both;}
+  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);font-weight:900;color:var(--white);line-height:1.05;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp .8s .1s ease both;}
+  .hero-title em{color:rgba(255,255,255,0.5);font-style:italic;}
+  .hero-sub{font-size:18px;color:rgba(255,255,255,0.7);line-height:1.7;animation:fadeUp .8s .2s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  .section{padding:100px 80px;}
+  .section-alt{background:var(--white);}
+  .container{max-width:1100px;margin:0 auto;}
+  .s-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--red);margin-bottom:12px;}
+  .s-title{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,44px);font-weight:900;line-height:1.1;letter-spacing:-1px;color:var(--charcoal);margin-bottom:16px;}
+  .s-title em{color:var(--red);font-style:italic;}
+  .divider{width:48px;height:3px;background:var(--red);border-radius:2px;margin:20px 0 32px;}
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+
+  /* SECCION 1 */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+  .about-text p{font-size:16px;color:var(--gray);line-height:1.8;margin-bottom:20px;}
+  .about-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:28px;}
+  .about-list li{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500;color:var(--charcoal);}
+  .about-list li::before{content:'';width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;}
+  .about-img-wrap{position:relative;}
+  .about-img{width:100%;height:480px;object-fit:cover;border-radius:16px;display:block;}
+  .about-img-badge{position:absolute;bottom:-20px;left:-20px;background:var(--red);color:var(--white);padding:24px 28px;border-radius:14px;box-shadow:0 8px 32px rgba(200,16,46,0.3);}
+  .badge-num{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;line-height:1;}
+  .badge-txt{font-size:13px;font-weight:500;margin-top:4px;opacity:0.9;}
+
+  /* SECCION 2 EQUIPO */
+  .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px;}
+  .team-card{background:var(--white);border-radius:20px;overflow:hidden;border:1px solid var(--gray-lt);transition:transform .3s,box-shadow .3s;}
+  .team-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,0.1);}
+  .team-img-wrap{position:relative;aspect-ratio:3/4;overflow:hidden;}
+  .team-img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .5s;}
+  .team-card:hover .team-img{transform:scale(1.04);}
+  .team-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(28,28,30,0.85) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px;}
+  .team-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:2px;}
+  .team-cargo{font-size:11px;color:rgba(255,255,255,0.7);font-weight:500;text-transform:uppercase;letter-spacing:1px;}
+  .team-body{padding:16px 18px 20px;}
+  .team-desc{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:14px;}
+  .team-skills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+  .skill-tag{font-size:10px;font-weight:600;padding:3px 10px;border-radius:100px;background:var(--red-pale);color:var(--red);}
+  .team-ig{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);text-decoration:none;transition:color .2s;padding-top:12px;border-top:1px solid var(--gray-lt);}
+  .team-ig:hover{color:var(--red);}
+  .team-ig svg{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
+
+  /* SECCION 3 HISTORIA */
+  .historia-grid{display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;}
+  .historia-timeline{display:flex;flex-direction:column;}
+  .tl-item{display:flex;gap:20px;padding-bottom:36px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item:last-child .tl-line{display:none;}
+  .tl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+  .tl-dot{width:14px;height:14px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;}
+  .tl-line{width:2px;flex:1;background:var(--gray-lt);margin-top:6px;}
+  .tl-year{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+  .tl-title{font-size:15px;font-weight:600;color:var(--charcoal);margin-bottom:6px;}
+  .tl-text{font-size:14px;color:var(--gray);line-height:1.6;}
+  .historia-text p{font-size:16px;color:var(--gray);line-height:1.8;margin-bottom:20px;}
+
+  /* SECCION 4 SERVICIOS */
+  .servicios-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:56px;}
+  .servicio-card{border-radius:16px;overflow:hidden;position:relative;height:320px;cursor:pointer;transition:transform .3s;}
+  .servicio-card:hover{transform:scale(1.02);}
+  .servicio-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+  .servicio-card:hover .servicio-img{transform:scale(1.06);}
+  .servicio-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(28,28,30,0.85) 0%,rgba(28,28,30,0.2) 60%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:28px;transition:background .3s;}
+  .servicio-card:hover .servicio-overlay{background:linear-gradient(to top,rgba(200,16,46,0.85) 0%,rgba(200,16,46,0.2) 60%,transparent 100%);}
+  .servicio-icon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+  .servicio-icon svg{width:22px;height:22px;stroke:var(--white);fill:none;stroke-width:1.5;}
+  .servicio-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:8px;}
+  .servicio-desc{font-size:14px;color:rgba(255,255,255,0.8);line-height:1.6;max-width:380px;}
+
+  .cta-wrap{background:var(--charcoal);padding:100px 80px;text-align:center;position:relative;overflow:hidden;}
+  .cta-wrap::before{content:'';position:absolute;top:-150px;left:50%;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(200,16,46,0.3) 0%,transparent 70%);}
+  .cta-title{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,52px);font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-1.5px;margin-bottom:16px;position:relative;z-index:1;}
+  .cta-title em{color:var(--red);font-style:italic;}
+  .cta-sub{font-size:17px;color:rgba(255,255,255,0.6);margin-bottom:40px;position:relative;z-index:1;}
+  .cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+  .btn-red{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:var(--white);padding:14px 32px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,transform .2s;}
+  .btn-red:hover{background:var(--red-dark);transform:translateY(-2px);}
+  .btn-outline-white{display:inline-flex;align-items:center;gap:8px;border:2px solid rgba(255,255,255,0.3);color:var(--white);padding:14px 32px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;}
+  .btn-outline-white:hover{background:rgba(255,255,255,0.1);}
+
+  footer{background:#111;padding:60px 80px 32px;color:rgba(255,255,255,0.5);}
+  .footer-top{display:flex;flex-wrap:wrap;gap:48px;justify-content:space-between;margin-bottom:48px;} .footer-top > div:first-child{flex:1 1 280px;} .footer-col{flex:1 1 160px;min-width:160px;}
+  .footer-logo{display:flex;align-items:center;margin-bottom:14px;}
+  .footer-logo img{height:60px;max-width:200px;object-fit:contain;filter:brightness(0) invert(1);}
+  .footer-desc{font-size:14px;line-height:1.7;max-width:260px;}
+  .footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--white);margin-bottom:20px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .footer-col ul a{font-size:14px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s;}
+  .footer-col ul a:hover{color:var(--red);}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+  .footer-social{display:flex;gap:20px;align-items:center;}
+  .social-link{color:rgba(255,255,255,0.5);transition:color .2s;display:flex;}
+  .social-link:hover{color:var(--red);}
+
+  @media(max-width:900px){
+    nav{padding:14px 20px;}
+    .hamburger{display:flex;}
+    .nav-links{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;background:var(--white);padding:90px 32px 40px;gap:0;transform:translateY(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:99;}
+    .nav-links.open{transform:translateY(0);}
+    .nav-links li{border-bottom:1px solid var(--gray-lt);}
+    .nav-links li:last-child{border-bottom:none;margin-top:16px;}
+    .nav-links a{display:block!important;padding:16px 0!important;font-size:18px!important;color:var(--charcoal)!important;}
+    .section{padding:60px 20px;}
+    .about-grid{grid-template-columns:1fr;gap:40px;}
+    .about-img-badge{bottom:12px;left:12px;}
+    .team-grid{grid-template-columns:1fr 1fr;}
+    .historia-grid{grid-template-columns:1fr;gap:40px;}
+    .servicios-grid{grid-template-columns:1fr;}
+    .cta-wrap{padding:60px 20px;}
+    footer{padding:40px 20px 24px;}
+    .footer-top{grid-template-columns:1fr;} .footer-bottom{flex-direction:column;gap:16px;align-items:center;}
+  }
+  /* MODAL SERVICIO */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+  .modal-bg.open{display:flex;}
+  .modal-servicio{background:var(--white);border-radius:20px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease;}
+  @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+  .modal-servicio-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .modal-servicio-icono-wrap{width:52px;height:52px;border-radius:14px;background:var(--red-pale);display:flex;align-items:center;justify-content:center;}
+  .modal-servicio-icono-wrap svg{width:26px;height:26px;stroke:var(--red);fill:none;stroke-width:1.5;}
+  .modal-close-btn{background:var(--off-white);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+  .modal-close-btn:hover{background:var(--gray-light);}
+  .modal-close-btn svg{width:16px;height:16px;color:var(--gray);}
+  .modal-servicio-titulo{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--charcoal);margin-bottom:14px;}
+  .modal-servicio-detalle{font-size:15px;color:var(--gray);line-height:1.8;margin-bottom:24px;}
+  .modal-servicio-detalle ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
+  .modal-servicio-detalle li{padding-left:18px;position:relative;}
+  .modal-servicio-detalle li::before{content:'•';position:absolute;left:0;color:var(--red);font-weight:700;}
+  .modal-servicio-detalle p{margin:0 0 8px;}
+  .modal-servicio-wa{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-decoration:none;transition:background .2s;}
+  .modal-servicio-wa:hover{background:#1da851;}
+  .modal-servicio-wa svg{width:18px;height:18px;fill:white;}
+  .wa-float{position:fixed;bottom:28px;right:28px;z-index:200;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform .2s,box-shadow .2s;text-decoration:none;}
+  .wa-float:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,0.5);}
+  .wa-float svg{width:28px;height:28px;fill:white;}
+  .wa-tooltip{position:absolute;right:64px;background:rgba(0,0,0,0.75);color:#fff;font-size:12px;font-weight:600;white-space:nowrap;padding:5px 10px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .wa-float:hover .wa-tooltip{opacity:1;}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html" onclick="window.location.href='index.html';return false;">
+    <img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Logo Cuencasa">
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="propiedades.html">Propiedades</a></li>
+    <li><a href="proyectos.html">Proyectos</a></li>
+    <li><a href="nosotros.html" class="active">Nosotros</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="index.html#contacto" class="nav-cta">Hablar con un asesor</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Cuenca, Ecuador </div>
+    <h1 class="hero-title">Una nueva cultura <em>inmobiliaria</em> en Cuenca</h1>
+    <p class="hero-sub">Somos el equipo de bienes raíces más confiable de Cuenca. Acompañamos a cada familia en el proceso más importante de su vida.</p>
+  </div>
+</section>
+
+<!-- 1. QUIÉNES SOMOS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <div class="s-eyebrow">Quiénes somos</div>
+        <h2 class="s-title">Cuencasa: <em>simple,</em><br>rentable y seguro</h2>
+        <div class="divider"></div>
+        <p>En Cuencasa creemos que el mundo inmobiliario no tiene por qué ser complicado. Somos un equipo multidisciplinario que acompaña a personas, emprendedores y empresas a convertir sus ideas en proyectos reales, de forma más simple, rentable y segura.</p>
+        <p>No somos solo una inmobiliaria tradicional. Vamos mucho más allá: entendemos cada proyecto como propio y trabajamos para que cada decisión sea más clara, cada proceso más fácil y cada resultado más rentable.</p>
+      </div>
+      <div class="about-img-wrap reveal">
+        <img class="about-img" src="https://res.cloudinary.com/da2xskien/image/upload/v1777506951/WhatsApp_Image_2026-04-29_at_17.57.43_cjkknb.jpg" alt="Equipo Cuencasa" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. EQUIPO -->
+<section class="section" id="equipo">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="s-eyebrow" style="text-align:center">Tu equipo experto</div>
+      <h2 class="s-title" style="text-align:center">Más que expertos, <em>somos aliados</em></h2>
+      <div class="divider" style="margin:20px auto 24px"></div>
+      <p style="font-size:16px;color:var(--gray);line-height:1.7;max-width:660px;margin:0 auto">Detrás de Cuencasa hay un equipo con diferentes especialidades que trabaja de manera coordinada para ofrecer soluciones completas. Combinamos conocimiento técnico, experiencia en el mercado y una visión estratégica que nos permite ver más allá de lo evidente. Nos enfocamos en entender cada proyecto en profundidad y encontrar la mejor manera de hacerlo avanzar.</p>
+    </div>
+    <div class="team-grid" id="team-grid">
+      <!-- Cargado dinámicamente desde BD -->
+    </div>
+  </div>
+</section>
+
+<!-- 3. NUESTRA HISTORIA -->
+<section class="section section-alt" id="historia">
+  <div class="container">
+    <div class="reveal">
+      <div class="s-eyebrow">Nuestra historia</div>
+      <h2 class="s-title">Cuencasa nace del deseo<br>de <em>emprender y ayudar</em></h2>
+      <div class="divider"></div>
+    </div>
+    <div class="historia-text reveal">
+      <p>Surgimos con una idea muy clara: profesionalizar aún más el sector inmobiliario y demostrar que lo complejo puede hacerse sencillo. Vimos un mercado en crecimiento, pero con muchas oportunidades de mejora, y decidimos ser parte del cambio.</p>
+      <p>Desde el inicio, nos propusimos acompañar tanto a pequeños como grandes emprendedores, brindándoles herramientas, conocimiento y respaldo real. Con el tiempo, las personas comenzaron a confiar en nosotros por nuestra forma de trabajar: cercana, transparente y profesional.</p>
+      <p>Y así seguimos, creciendo junto a cada cliente y evolucionando constantemente para ofrecer cada vez más.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. SERVICIOS -->
+<section class="section" id="servicios">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="s-eyebrow" style="text-align:center">Lo que hacemos</div>
+      <h2 class="s-title" style="text-align:center">Nuestros <em>servicios</em></h2>
+      <div class="divider" style="margin:20px auto 16px"></div>
+      <p style="font-size:16px;color:var(--gray);text-align:center;max-width:520px;margin:0 auto">Soluciones integrales para todo lo que necesitas en el mundo inmobiliario.</p>
+    </div>
+    <div class="servicios-grid" id="servicios-grid">
+      <!-- Cargado dinámicamente desde BD -->
+    </div>
+  </div>
+</section>
+
+<div class="cta-wrap">
+  <h2 class="cta-title">¿Listo para encontrar<br>tu <em>hogar ideal</em>?</h2>
+  <p class="cta-sub">Nuestro equipo está listo para acompañarte en cada paso del proceso.</p>
+  <div class="cta-btns">
+    <a class="btn-red" href="index.html#propiedades">Ver propiedades disponibles</a>
+    <a class="btn-outline-white" href="index.html#contacto">Hablar con un asesor</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo"><img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Cuencasa"></div>
+      <p class="footer-desc">La plataforma de bienes raices mas confiable de Cuenca, Ecuador.</p>
+    </div>
+    <div class="footer-col"><h4>Propiedades</h4><ul><li><a href="propiedades.html">Todas las propiedades</a></li><li><a href="propiedades.html?tipo=Venta">Casas en venta</a></li><li><a href="propiedades.html?tipo=Arriendo">Arriendos</a></li></ul></div>
+    <div class="footer-col"><h4>Cuencasa</h4><ul><li><a href="nosotros.html">Nosotros</a></li><li><a href="proyectos.html">Proyectos</a></li><li><a href="index.html#contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Cuencasa · Cuenca, Ecuador</span>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/profile.php?id=61569156524239" target="_blank" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="https://www.instagram.com/cuencasa.agencia/" target="_blank" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+      <a href="https://www.tiktok.com/@cuencasa.agencia" target="_blank" class="social-link" aria-label="TikTok"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.19 8.19 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg></a>
+      <a href="mailto:agenciacuencasa@gmail.com" class="social-link" aria-label="Email"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const API = CONFIG.API;
+  const igSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`;
+
+  const iconosSvg = {
+    home:     `<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+    key:      `<svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>`,
+    shield:   `<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    chart:    `<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    trending: `<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+    building: `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  };
+
+  const fotosSvg = [
+    'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80',
+    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800&q=80',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+  ];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarConfigNosotros();
+    cargarEquipo();
+    cargarServicios();
+    initObserver();
+  });
+
+  async function cargarConfigNosotros() {
+    try {
+      const res = await fetch(`${API}/api/configuracion`);
+      const c = await res.json();
+      window._waNumNosotros = c.wa_numero || '593999999999';
+      window._waMsgNosotros = c.wa_mensaje || 'Hola, me interesa un servicio de Cuencasa';
+    } catch(e) {
+      window._waNumNosotros = '593999999999';
+    }
+    const btn = document.getElementById('wa-btn');
+    if (btn) btn.href = `https://wa.me/${window._waNumNosotros}?text=${encodeURIComponent('Hola, me interesa un servicio de Cuencasa')}`;
+  }
+
+  async function cargarEquipo() {
+    try {
+      const res  = await fetch(`${API}/api/equipo`);
+      const data = await res.json();
+      const grid = document.getElementById('team-grid');
+      if (!data.length) { grid.innerHTML = '<p style="text-align:center;color:#6b6b6b">No hay miembros del equipo.</p>'; return; }
+      grid.innerHTML = data.map(m => {
+        const imgHtml = m.foto_url
+          ? `<img class="team-img" src="${m.foto_url}" alt="${m.nombre}">`
+          : `<div class="team-img" style="background:linear-gradient(135deg,#C8102E,#6b0819);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;color:white;font-family:'Barlow Condensed',sans-serif">${m.nombre[0]}</div>`;
+        const igHtml = m.instagram
+          ? `<a class="team-ig" href="https://www.instagram.com/${m.instagram.replace('@','')}" target="_blank">${igSvg} ${m.instagram}</a>`
+          : '';
+        return `
+        <div class="team-card reveal">
+          <div class="team-img-wrap">
+            ${imgHtml}
+            <div class="team-overlay"><div class="team-name">${m.nombre}</div><div class="team-cargo">${m.cargo||''}</div></div>
+          </div>
+          <div class="team-body">
+            <p class="team-desc">${m.descripcion||''}</p>
+            ${igHtml}
+          </div>
+        </div>`;
+      }).join('');
+      initObserver();
+    } catch(e) {}
+  }
+
+  async function cargarServicios() {
+    try {
+      const res  = await fetch(`${API}/api/servicios`);
+      const data = await res.json();
+      const grid = document.getElementById('servicios-grid');
+      if (!data.length) { grid.innerHTML = '<p style="text-align:center;color:#6b6b6b">No hay servicios.</p>'; return; }
+      grid.innerHTML = data.map((s, i) => {
+        const foto = s.imagen_url || fotosSvg[i % fotosSvg.length];
+        const icono = iconosSvg[s.icono] || iconosSvg.home;
+        return `
+        <div class="servicio-card reveal" onclick="abrirModalServicio(${s.id})">
+          <img class="servicio-img" src="${foto}" alt="${s.titulo}">
+          <div class="servicio-overlay">
+            <div class="servicio-icon">${icono}</div>
+            <div class="servicio-name">${s.titulo}</div>
+            <div class="servicio-desc">${s.descripcion||''}</div>
+          </div>
+        </div>`;
+      }).join('');
+      window._serviciosData = data;
+      initObserver();
+    } catch(e) {}
+  }
+
+  function formatDetalle(texto) {
+    if (!texto) return '';
+    const lineas = texto.replace(/<br\s*\/?>/gi, '\n').split('\n');
+    let html = '';
+    let enLista = false;
+    for (const raw of lineas) {
+      const l = raw.trim();
+      if (!l) {
+        if (enLista) { html += '</ul>'; enLista = false; }
+        continue;
+      }
+      if (l.startsWith('-')) {
+        if (!enLista) { html += '<ul>'; enLista = true; }
+        html += `<li>${l.slice(1).trim()}</li>`;
+      } else {
+        if (enLista) { html += '</ul>'; enLista = false; }
+        html += `<p>${l}</p>`;
+      }
+    }
+    if (enLista) html += '</ul>';
+    return html;
+  }
+
+  function abrirModalServicio(id) {
+    const data = window._serviciosData || [];
+    const s = data.find(x => x.id === id);
+    if (!s) return;
+    const icono = iconosSvg[s.icono] || iconosSvg.home;
+    document.getElementById('modal-servicio-icono').innerHTML  = icono;
+    document.getElementById('modal-servicio-titulo').textContent = s.titulo;
+    document.getElementById('modal-servicio-detalle').innerHTML  = formatDetalle(s.detalle || s.descripcion || '');
+    const waNum = window._waNumNosotros || '593999999999';
+    const waMsg = encodeURIComponent(`Hola, me interesa el servicio: ${s.titulo}`);
+    document.getElementById('modal-servicio-wa').href = `https://wa.me/${waNum}?text=${waMsg}`;
+    document.getElementById('modal-servicio').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModalServicio() {
+    document.getElementById('modal-servicio').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function initObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 80); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal:not(.visible)').forEach(r => observer.observe(r));
+  }
+
+  function toggleMenu() {
+    const h = document.getElementById('hamburger'); const n = document.getElementById('nav-links');
+    h.classList.toggle('open'); n.classList.toggle('open');
+    document.body.style.overflow = n.classList.contains('open') ? 'hidden' : '';
+  }
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('hamburger').classList.remove('open');
+      document.getElementById('nav-links').classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+<a class="wa-float" id="wa-btn" href="#" target="_blank" aria-label="WhatsApp">
+  <span class="wa-tooltip">Necesitas ayuda?</span>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+</a>
+
+<!-- MODAL SERVICIO -->
+<div class="modal-bg" id="modal-servicio" onclick="if(event.target===this)cerrarModalServicio()">
+  <div class="modal-servicio">
+    <div class="modal-servicio-header">
+      <div class="modal-servicio-icono-wrap" id="modal-servicio-icono"></div>
+      <button class="modal-close-btn" onclick="cerrarModalServicio()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <h3 class="modal-servicio-titulo" id="modal-servicio-titulo"></h3>
+    <p class="modal-servicio-detalle" id="modal-servicio-detalle"></p>
+    <a href="#" class="modal-servicio-wa" id="modal-servicio-wa" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+      Consultar por WhatsApp
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

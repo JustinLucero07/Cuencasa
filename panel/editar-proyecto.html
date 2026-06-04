@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="config.js"></script>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/da2xskien/image/upload/v1777507199/WhatsApp_Image_2026-04-29_at_17.54.30_fvkdq2.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuencasa · Editar Proyecto</title>
+<link rel="stylesheet" href="global.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--charcoal);display:flex;min-height:100vh;}
+  .sidebar{width:240px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;}
+  .sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .sidebar-logo img{height:44px;object-fit:contain;max-width:180px;}
+  .sidebar-logo p{font-size:11px;color:rgba(255,255,255,0.35);margin-top:5px;}
+  .sidebar-nav{flex:1;padding:10px 0;}
+  .nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);padding:10px 20px 4px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;border-left:3px solid transparent;transition:all .2s;}
+  .nav-item:hover{color:#fff;background:rgba(255,255,255,0.05);}
+  .nav-item.active{color:#fff;background:rgba(200,16,46,0.15);border-left-color:var(--red);}
+  .nav-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+  .sidebar-footer{padding:12px 20px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;color:rgba(255,255,255,0.25);}
+  .main{margin-left:240px;flex:1;display:flex;flex-direction:column;}
+  .topbar{background:var(--white);border-bottom:1px solid var(--gray-lt);padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;}
+  .back-btn{display:flex;align-items:center;gap:6px;color:var(--gray);font-size:13px;text-decoration:none;}
+  .back-btn:hover{color:var(--red);}
+  .back-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+  .topbar-info .topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;}
+  .topbar-info .topbar-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;}
+  .btn-primary{background:var(--red);color:#fff;}
+  .btn-primary:hover{background:var(--red-dark);}
+  .btn-primary:disabled{background:var(--gray);cursor:not-allowed;}
+  .btn-secondary{background:var(--white);color:var(--charcoal);border:1px solid var(--gray-lt);}
+  .btn-secondary:hover{background:var(--bg);}
+  .btn-danger{background:#FEE2E2;color:#991B1B;}
+  .btn-danger:hover{background:#FECACA;}
+  .btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+  .content{padding:20px 24px;max-width:960px;}
+  .card{background:var(--white);border-radius:12px;border:1px solid var(--gray-lt);padding:20px;margin-bottom:16px;}
+  .card-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--gray-lt);display:flex;align-items:center;gap:7px;}
+  .card-title svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+  .fg{display:flex;flex-direction:column;gap:4px;}
+  .fg.full{grid-column:1/-1;}
+  .fl{font-size:11px;font-weight:600;color:var(--charcoal);}
+  .fi{padding:9px 12px;border:1.5px solid var(--gray-lt);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--white);outline:none;transition:border-color .2s;appearance:none;width:100%;}
+  .fi:focus{border-color:var(--red);}
+  .fi::placeholder{color:#bbb;}
+  textarea.fi{resize:vertical;min-height:80px;}
+  .fhint{font-size:11px;color:var(--gray);}
+  .checkbox-row{display:flex;align-items:center;gap:8px;padding:8px 0;}
+  .checkbox-row input{width:16px;height:16px;accent-color:var(--red);cursor:pointer;}
+  .checkbox-row label{font-size:13px;font-weight:500;cursor:pointer;}
+  .toggle-row{display:flex;align-items:center;gap:10px;}
+  .toggle{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-slider{position:absolute;inset:0;background:var(--gray-lt);border-radius:22px;transition:.2s;}
+  .toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;}
+  .toggle input:checked+.toggle-slider{background:var(--green);}
+  .toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+  .fotos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;}
+  .foto-exist{position:relative;aspect-ratio:4/3;border-radius:7px;overflow:hidden;}
+  .foto-exist img{width:100%;height:100%;object-fit:cover;}
+  .foto-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .foto-remove:hover{background:var(--red);}
+  .foto-remove svg{width:9px;height:9px;stroke:#fff;fill:none;stroke-width:2.5;}
+  .upload-area{border:2px dashed var(--gray-lt);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);}
+  .upload-area:hover{border-color:var(--red);background:var(--red-pale);}
+  .upload-area svg{width:26px;height:26px;stroke:var(--gray);fill:none;stroke-width:1.5;margin-bottom:5px;}
+  .upload-area:hover svg{stroke:var(--red);}
+  .upload-title{font-size:12px;font-weight:600;}
+  .upload-sub{font-size:11px;color:var(--gray);}
+  .nuevas-preview{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px;}
+  .nueva-foto{position:relative;aspect-ratio:4/3;border-radius:7px;overflow:hidden;border:2px solid var(--green);}
+  .nueva-foto img{width:100%;height:100%;object-fit:cover;}
+  .nueva-foto::before{content:'Nueva';position:absolute;top:3px;left:3px;background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;}
+  .nueva-remove{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .nueva-remove:hover{background:var(--red);}
+  .nueva-remove svg{width:8px;height:8px;stroke:#fff;fill:none;stroke-width:2.5;}
+  .foto-count{font-size:11px;color:var(--gray);margin-top:5px;}
+  .progress-wrap{display:none;margin-top:10px;}
+  .progress-wrap.show{display:block;}
+  .progress-bar{height:4px;background:var(--gray-lt);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .3s;width:0%;}
+  .progress-label{font-size:11px;color:var(--gray);margin-top:4px;}
+  .unidades-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .unidad-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--gray-lt);border-radius:8px;background:var(--bg);}
+  .unidad-nombre{font-size:13px;font-weight:600;}
+  .unidad-info{font-size:12px;color:var(--gray);}
+  .badge-disp{font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;}
+  .disp-si{background:var(--green-lt);color:var(--green);}
+  .disp-no{background:#FEE2E2;color:#991B1B;}
+  .add-unidad{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr auto;gap:8px;align-items:end;padding:12px;border:1.5px dashed var(--gray-lt);border-radius:8px;background:var(--bg);}
+  .sk{background:linear-gradient(90deg,var(--gray-lt) 25%,#f0ece8 50%,var(--gray-lt) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  .actions-bar{display:flex;gap:10px;align-items:center;justify-content:flex-end;padding:14px 0;border-top:1px solid var(--gray-lt);margin-top:6px;}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--charcoal);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:300;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.ok{background:var(--green);}
+  .toast.err{background:var(--red);}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Cuencasa" style="filter:brightness(0) invert(1)">
+    <p>Panel de administracion</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a class="nav-item active" href="index.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Propiedades</a>
+  </nav>
+  <div class="sidebar-footer">Cuencasa v2.0</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <a class="back-btn" href="index.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Volver</a>
+    <div class="topbar-info">
+      <div class="topbar-title">Editar proyecto</div>
+      <div class="topbar-sub" id="topbar-sub">Cargando...</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="skeleton"><div class="card"><div class="sk" style="height:16px;width:200px;margin-bottom:16px"></div><div class="form-grid"><div class="sk" style="height:40px;grid-column:1/-1"></div><div class="sk" style="height:40px"></div><div class="sk" style="height:40px"></div></div></div></div>
+    <div id="formulario" style="display:none">
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>Informacion principal</div>
+        <div class="form-grid">
+          <div class="fg full"><label class="fl">Titulo</label><input class="fi" type="text" id="titulo"></div>
+          <div class="fg"><label class="fl">Tipo</label><select class="fi" id="tipo"><option value="Venta">Venta</option><option value="Arriendo">Arriendo</option></select></div>
+          <div class="fg"><label class="fl">Estado</label><select class="fi" id="estado"><option value="En planos">En planos</option><option value="En construccion">En construccion</option><option value="Terminado">Terminado</option></select></div>
+          <div class="fg"><label class="fl">Precio desde ($)</label><input class="fi" type="number" id="precio_desde"></div>
+          <div class="fg"><label class="fl">Precio hasta ($)</label><input class="fi" type="number" id="precio_hasta"></div>
+          <div class="fg"><label class="fl">Fecha de entrega</label><input class="fi" type="text" id="entrega" placeholder="Ej. Junio 2026"></div>
+          <div class="fg"><label class="fl">Parroquia</label><select class="fi" id="parroquia"><option value="">Seleccionar parroquia</option></select></div>
+          <div class="fg"><label class="fl">Sector</label><select class="fi" id="sector"><option value="">Seleccionar sector</option></select></div>
+          <div class="fg full"><label class="fl">Descripcion</label><textarea class="fi" id="descripcion"></textarea></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Caracteristicas</div>
+        <div class="form-grid cols3">
+          <div class="fg"><label class="fl">Plantas</label><input class="fi" type="number" id="plantas" min="1"></div>
+          <div class="fg"><label class="fl">Metros terreno (m2)</label><input class="fi" type="number" id="metros_terreno"></div>
+          <div class="fg"><label class="fl">Metros construccion (m2)</label><input class="fi" type="number" id="metros_construccion"></div>
+          <div class="fg"><label class="fl">Antiguedad (anos)</label><input class="fi" type="number" id="antiguedad" min="0"></div>
+          <div class="fg"><label class="fl">Parqueaderos</label><input class="fi" type="number" id="parqueadero" min="0" placeholder="Ej. 1"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>Ubicacion y recorrido</div>
+        <div class="form-grid">
+          <div class="fg full"><label class="fl">Link de Google Maps</label><input class="fi" type="url" id="link_mapa"></div>
+          <div class="fg full"><label class="fl">Link de recorrido virtual</label><input class="fi" type="url" id="link_recorrido"></div>
+          <div class="fg full"><label class="fl">Video de YouTube</label><input class="fi" type="url" id="link_video" placeholder="https://www.youtube.com/watch?v=..."><span class="fhint">El video aparecerá embebido debajo de la descripción en la página del proyecto</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Visibilidad</div>
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="destacado"><span class="toggle-slider"></span></label>
+          <div><div style="font-size:13px;font-weight:600">Mostrar en la pagina principal</div><div style="font-size:11px;color:var(--gray)">El proyecto aparece en la seccion de proyectos del inicio</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Unidades del proyecto</div>
+        <div class="unidades-list" id="unidades-list"></div>
+        <div class="add-unidad">
+          <div class="fg"><label class="fl">Titulo</label><input class="fi" type="text" id="u-titulo" placeholder="Depto 101"></div>
+          <div class="fg"><label class="fl">Tipo</label><select class="fi" id="u-tipo"><option value="Departamento">Depto.</option><option value="Casa">Casa</option><option value="Local">Local</option><option value="Oficina">Oficina</option></select></div>
+          <div class="fg"><label class="fl">Precio ($)</label><input class="fi" type="number" id="u-precio" placeholder="85000"></div>
+          <div class="fg"><label class="fl">Hab.</label><input class="fi" type="number" id="u-hab" placeholder="2" min="0"></div>
+          <div class="fg"><label class="fl">Banos</label><input class="fi" type="number" id="u-banos" placeholder="1" min="0"></div>
+          <div class="fg"><label class="fl">m2</label><input class="fi" type="number" id="u-metros" placeholder="70"></div>
+          <div class="fg" style="align-self:end"><button class="btn btn-primary" onclick="agregarUnidad()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Fotos</div>
+        <div class="fotos-grid" id="fotos-existentes"></div>
+        <div class="upload-area" onclick="document.getElementById('fotos-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFotos(event)" id="upload-area">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-title">Agregar mas fotos</div>
+          <div class="upload-sub">JPG, PNG, WEBP, HEIC y más</div>
+          <input type="file" id="fotos-input" style="display:none" multiple accept="image/*" onchange="previewNuevas(event)">
+        </div>
+        <div class="nuevas-preview" id="nuevas-preview"></div>
+        <div class="foto-count" id="foto-count"></div>
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="progress-label" id="progress-label"></div>
+        </div>
+      </div>
+
+      <div class="actions-bar">
+        <a class="btn btn-secondary" href="index.html">Cancelar</a>
+        <button class="btn btn-primary" id="btn-guardar" onclick="guardar()">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+          Guardar cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const API = CONFIG.API;
+const id  = new URLSearchParams(window.location.search).get('id');
+let nuevasFotos = [];
+let unidades = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!id) { toast('ID no encontrado','err'); setTimeout(()=>window.location.href='index.html',1500); return; }
+  await cargarParroquias();
+  await cargarSectores();
+  cargarProyecto();
+});
+
+async function cargarParroquias() {
+  try {
+    const res = await fetch(`${API}/api/parroquias`); const data = await res.json();
+    const sel = document.getElementById('parroquia');
+    data.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; sel.appendChild(o); });
+  } catch(e) {}
+}
+
+async function cargarSectores(sectorId) {
+  const sel = document.getElementById('sector');
+  sel.innerHTML='<option value="">Seleccionar sector</option>';
+  try {
+    const res = await fetch(`${API}/api/sectores`); const data = await res.json();
+    data.forEach(s => { const o=document.createElement('option'); o.value=s.id; o.textContent=s.nombre+(s.parroquia?` (${s.parroquia})`:''); sel.appendChild(o); });
+    if (sectorId) sel.value = sectorId;
+  } catch(e) {}
+}
+
+async function cargarProyecto() {
+  try {
+    const res = await fetch(`${API}/api/proyectos/${id}`);
+    const p   = await res.json();
+    if (!res.ok) { toast('Proyecto no encontrado','err'); setTimeout(()=>window.location.href='index.html',1500); return; }
+    document.getElementById('topbar-sub').textContent = p.titulo;
+    document.getElementById('titulo').value       = p.titulo||'';
+    document.getElementById('tipo').value         = p.tipo||'Venta';
+    document.getElementById('estado').value       = p.estado||'En construccion';
+    document.getElementById('precio_desde').value = p.precio_desde||'';
+    document.getElementById('precio_hasta').value = p.precio_hasta||'';
+    document.getElementById('entrega').value      = p.entrega||'';
+    document.getElementById('descripcion').value  = p.descripcion||'';
+    document.getElementById('plantas').value      = p.plantas||'';
+    document.getElementById('metros_terreno').value      = p.metros_terreno||'';
+    document.getElementById('metros_construccion').value = p.metros_construccion||'';
+    document.getElementById('antiguedad').value   = p.antiguedad||'';
+    document.getElementById('parqueadero').value   = p.parqueadero||0;
+    document.getElementById('link_mapa').value    = p.link_mapa||'';
+    document.getElementById('link_recorrido').value = p.link_recorrido||'';
+    document.getElementById('link_video').value    = p.link_video||'';
+    document.getElementById('destacado').checked  = !!p.destacado;
+    if (p.parroquia_id) document.getElementById('parroquia').value = p.parroquia_id;
+    if (p.sector_id)   document.getElementById('sector').value    = p.sector_id;
+    // Unidades existentes
+    unidades = (p.unidades||[]).map(u => ({...u, _existente:true}));
+    renderUnidades();
+    // Fotos existentes
+    renderFotosExistentes(p.fotos||[]);
+    document.getElementById('skeleton').style.display='none';
+    document.getElementById('formulario').style.display='block';
+  } catch(e) { toast('Error de conexion','err'); }
+}
+
+function renderFotosExistentes(fotos) {
+  const c = document.getElementById('fotos-existentes');
+  if (!fotos.length) { c.innerHTML='<p style="font-size:12px;color:var(--gray);margin-bottom:10px;grid-column:1/-1">No hay fotos.</p>'; return; }
+  c.innerHTML = fotos.map(f=>`
+    <div class="foto-exist">
+      <img src="${f.url}" alt="">
+      <button class="foto-remove" onclick="eliminarFoto(${f.id},this)"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`).join('');
+}
+
+async function eliminarFoto(fotoId, btn) {
+  try { await fetch(`${API}/api/proyectos/fotos/${fotoId}`,{method:'DELETE'}); btn.closest('.foto-exist').remove(); toast('Foto eliminada','ok'); }
+  catch(e) { toast('Error','err'); }
+}
+
+// UNIDADES
+function agregarUnidad() {
+  const titulo = document.getElementById('u-titulo').value.trim();
+  if (!titulo) { toast('El titulo es obligatorio','err'); return; }
+  unidades.push({
+    titulo,
+    tipo:         document.getElementById('u-tipo').value,
+    precio:       Number(document.getElementById('u-precio').value)||0,
+    habitaciones: Number(document.getElementById('u-hab').value)||null,
+    banos:        Number(document.getElementById('u-banos').value)||null,
+    metros:       Number(document.getElementById('u-metros').value)||null,
+    disponible:   1,
+    _nueva:       true,
+  });
+  renderUnidades();
+  ['u-titulo','u-precio','u-hab','u-banos','u-metros'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function eliminarUnidad(idx) {
+  const u = unidades[idx];
+  if (u._existente && u.id) {
+    if (!confirm('Eliminar esta unidad?')) return;
+    try { await fetch(`${API}/api/proyectos/unidades/${u.id}`,{method:'DELETE'}); }
+    catch(e) { toast('Error eliminando unidad','err'); return; }
+  }
+  unidades.splice(idx,1);
+  renderUnidades();
+}
+
+async function toggleDisponible(idx) {
+  const u = unidades[idx];
+  u.disponible = u.disponible ? 0 : 1;
+  if (u._existente && u.id) {
+    await fetch(`${API}/api/proyectos/unidades/${u.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...u})});
+  }
+  renderUnidades();
+}
+
+function renderUnidades() {
+  const list = document.getElementById('unidades-list');
+  if (!unidades.length) { list.innerHTML='<p style="font-size:12px;color:var(--gray);text-align:center;padding:12px">No hay unidades.</p>'; return; }
+  list.innerHTML = unidades.map((u,i)=>`
+    <div class="unidad-row">
+      <div><div class="unidad-nombre">${u.titulo}</div><div class="unidad-info">${u.tipo}</div></div>
+      <div class="unidad-info">$${Number(u.precio).toLocaleString()}</div>
+      <div class="unidad-info">${u.habitaciones||'-'} hab.</div>
+      <div class="unidad-info">${u.banos||'-'} ban.</div>
+      <div class="unidad-info">${u.metros||'-'} m2</div>
+      <span class="badge-disp ${u.disponible?'disp-si':'disp-no'}" style="cursor:pointer" onclick="toggleDisponible(${i})">${u.disponible?'Disponible':'Vendido'}</span>
+      <button class="btn btn-danger" style="padding:5px 8px" onclick="eliminarUnidad(${i})"><svg viewBox="0 0 24 24" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+    </div>`).join('');
+}
+
+// FOTOS NUEVAS
+function dragOver(e)  { e.preventDefault(); document.getElementById('upload-area').style.borderColor='var(--red)'; }
+function dragLeave()  { document.getElementById('upload-area').style.borderColor=''; }
+function dropFotos(e) { e.preventDefault(); dragLeave(); nuevasFotos=[...nuevasFotos,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))]; previewNuevas({target:{files:[]}}); }
+
+function previewNuevas(e) {
+  nuevasFotos = [...nuevasFotos, ...Array.from(e.target.files).filter(f=>f.type.startsWith('image/'))];
+  e.target.value='';
+  const c = document.getElementById('nuevas-preview');
+  document.getElementById('foto-count').textContent = nuevasFotos.length ? `${nuevasFotos.length} foto(s) nueva(s)` : '';
+  c.innerHTML = nuevasFotos.map((f,i)=>`
+    <div class="nueva-foto">
+      <img src="${URL.createObjectURL(f)}" alt="">
+      <button class="nueva-remove" onclick="quitarNueva(${i})"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`).join('');
+}
+function quitarNueva(i) { nuevasFotos.splice(i,1); previewNuevas({target:{files:[]}}); }
+
+// GUARDAR
+async function guardar() {
+  const titulo = document.getElementById('titulo').value.trim();
+  if (!titulo) { toast('El titulo es obligatorio','err'); return; }
+  const btn = document.getElementById('btn-guardar');
+  btn.disabled=true; btn.innerHTML=`<svg viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" stroke="white" stroke-width="2" fill="none"/></svg> Guardando...`;
+  try {
+    // 1. Actualizar proyecto
+    await fetch(`${API}/api/proyectos/${id}`,{
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        titulo,
+        tipo:                document.getElementById('tipo').value,
+        estado:              document.getElementById('estado').value,
+        precio_desde:        Number(document.getElementById('precio_desde').value)||null,
+        precio_hasta:        Number(document.getElementById('precio_hasta').value)||null,
+        entrega:             document.getElementById('entrega').value.trim()||null,
+        parroquia_id:        document.getElementById('parroquia').value||null,
+        sector_id:           document.getElementById('sector').value||null,
+        descripcion:         document.getElementById('descripcion').value.trim(),
+        plantas:             Number(document.getElementById('plantas').value)||null,
+        metros_terreno:      Number(document.getElementById('metros_terreno').value)||null,
+        metros_construccion: Number(document.getElementById('metros_construccion').value)||null,
+        antiguedad:          Number(document.getElementById('antiguedad').value)||null,
+        parqueadero:         Number(document.getElementById('parqueadero').value)||0,
+        link_mapa:           document.getElementById('link_mapa').value.trim()||null,
+        link_recorrido:      document.getElementById('link_recorrido').value.trim()||null,
+        link_video:          document.getElementById('link_video').value.trim()||null,
+        destacado:           document.getElementById('destacado').checked?1:0,
+      })
+    });
+
+    // 2. Crear unidades nuevas
+    for (const u of unidades.filter(u=>u._nueva)) {
+      await fetch(`${API}/api/proyectos/${id}/unidades`,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({titulo:u.titulo,tipo:u.tipo,precio:u.precio,habitaciones:u.habitaciones,banos:u.banos,metros:u.metros,disponible:u.disponible!==undefined?u.disponible:1})
+      });
+    }
+
+    // 3. Subir fotos nuevas
+    if (nuevasFotos.length > 0) {
+      const pw=document.getElementById('progress-wrap'); pw.classList.add('show');
+      document.getElementById('progress-fill').style.width='20%';
+      document.getElementById('progress-label').textContent=`Subiendo ${nuevasFotos.length} foto(s)...`;
+      const fd=new FormData(); nuevasFotos.forEach(f=>fd.append('fotos',f));
+      await fetch(`${API}/api/proyectos/${id}/fotos`,{method:'POST',body:fd});
+      document.getElementById('progress-fill').style.width='100%';
+      document.getElementById('progress-label').textContent='Fotos subidas!';
+    }
+
+    toast('Proyecto actualizado!','ok');
+    setTimeout(()=>window.location.href='index.html',1500);
+  } catch(e) { toast('Error de conexion','err'); btn.disabled=false; btn.innerHTML='Guardar cambios'; }
+}
+
+function toast(msg,tipo='') {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast ${tipo} show`;
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>

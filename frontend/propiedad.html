@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="config.js"></script>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/da2xskien/image/upload/v1777507199/WhatsApp_Image_2026-04-29_at_17.54.30_fvkdq2.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuencasa - Detalle de Propiedad</title>
+<link rel="stylesheet" href="global.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  html{scroll-behavior:smooth;overflow-x:hidden;}
+  body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--charcoal);overflow-x:hidden;max-width:100%;touch-action:pan-y pinch-zoom;overscroll-behavior-x:none;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,16,46,0.08);box-shadow:0 2px 24px rgba(0,0,0,0.06);}
+  .logo { display: flex; align-items: center; }
+    .logo img { height: 80px; max-width: 220px; width: 100%; object-fit: contain; }
+  .nav-links{display:flex;gap:32px;list-style:none;align-items:center;}
+  .nav-links a{font-size:14px;font-weight:500;color:var(--gray);text-decoration:none;transition:color .2s;}
+  .nav-links a:hover{color:var(--red);}
+  .nav-cta{background:var(--red)!important;color:var(--white)!important;padding:10px 22px;border-radius:6px;font-weight:600!important;}
+  .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;z-index:101;}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--charcoal);border-radius:2px;transition:all .3s;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .galeria-wrap{margin-top:118px;position:relative;background:var(--charcoal);}
+  .galeria-main{width:100%;max-width:1200px;height:75vh;min-height:550px;max-height:800px;object-fit:contain;display:block;background:var(--charcoal);margin:0 auto;}
+  .galeria-main-ph{width:100%;max-width:1200px;height:75vh;min-height:550px;max-height:800px;background:linear-gradient(135deg,#C8102E,#6b0819);display:flex;align-items:center;justify-content:center;margin:0 auto;}
+  .galeria-thumbs{display:flex;gap:8px;padding:8px 0;background:var(--charcoal);overflow-x:auto;touch-action:pan-x;max-width:1200px;margin:0 auto;}
+  .galeria-thumbs::-webkit-scrollbar{height:4px;}
+  .galeria-thumbs::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px;}
+  .thumb{width:90px;height:64px;object-fit:cover;border-radius:5px;cursor:pointer;opacity:0.6;transition:opacity .2s;flex-shrink:0;border:2px solid transparent;}
+  .thumb.active{opacity:1;border-color:var(--red);transform:scale(1.05);}
+  .galeria-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.45);color:var(--white);border:none;cursor:pointer;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:10;transition:background .2s;backdrop-filter:blur(4px);}
+  .galeria-arrow:hover{background:rgba(0,0,0,0.7);}
+  .galeria-arrow svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .galeria-arrow-prev{left:max(16px, calc(50% - 600px + 16px));}
+  .galeria-arrow-next{right:max(16px, calc(50% - 600px + 16px));}
+  .galeria-badge{position:absolute;top:32px;left:max(40px, calc(50% - 600px + 24px));color:var(--white);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 14px;border-radius:6px;background:var(--red);z-index:2;}
+  .galeria-badge.arriendo{background:var(--blue);}
+  .container{max-width:1200px;margin:0 auto;padding:0 40px;}
+  .detail-grid{display:grid;grid-template-columns:1fr 360px;gap:40px;padding:40px 0 80px;}
+  .detail-precio{font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:900;color:var(--red);line-height:1;margin-bottom:4px;}
+  .detail-precio-sub{font-size:13px;color:var(--gray);margin-bottom:16px;}
+  .detail-titulo{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;color:var(--charcoal);line-height:1.1;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+  .detail-loc{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--gray);margin-bottom:24px;}
+  .detail-loc svg{width:15px;height:15px;stroke:var(--red);fill:none;stroke-width:2;}
+  .features-bar{display:flex;border:1px solid var(--gray-lt);border-radius:12px;overflow:hidden;margin-bottom:32px;flex-wrap:wrap;}
+  .feat-item{flex:1;min-width:100px;padding:14px 16px;text-align:center;border-right:1px solid var(--gray-lt);}
+  .feat-item:last-child{border-right:none;}
+  .feat-icon{font-size:20px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;}
+  .feat-icon svg{width:20px;height:20px;stroke:var(--red);fill:none;stroke-width:1.8;}
+  .feat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--charcoal);line-height:1;}
+  .feat-label{font-size:11px;color:var(--gray);margin-top:3px;}
+  .sec-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--charcoal);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--red);display:inline-block;text-transform:uppercase;letter-spacing:0.5px;}
+  .sec-wrap{margin-bottom:32px;}
+  .descripcion{font-size:15px;color:var(--gray);line-height:1.8;white-space:pre-line;}
+  .mapa-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--gray-lt);margin-bottom:12px;}
+  .mapa-wrap iframe{width:100%;height:340px;border:none;display:block;}
+  .mapa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue-lt);color:var(--blue);padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;}
+  .mapa-btn:hover{background:var(--blue);color:var(--white);}
+  .mapa-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+  .recorrido-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--gray-lt);margin-bottom:12px;background:var(--charcoal);}
+  .recorrido-wrap iframe{width:100%;height:380px;border:none;display:block;}
+  .video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid var(--gray-lt);margin-bottom:12px;}
+  .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;}
+  .contact-card{background:var(--white);border-radius:16px;border:1px solid var(--gray-lt);padding:24px;position:sticky;top:88px;}
+  .contact-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+  .contact-sub{font-size:12px;color:var(--gray);margin-bottom:18px;}
+  .contact-form{display:flex;flex-direction:column;gap:10px;}
+  .fi{padding:11px 14px;border:1.5px solid var(--gray-lt);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--charcoal);background:var(--off-white);outline:none;transition:border-color .2s;}
+  .fi:focus{border-color:var(--red);background:var(--white);}
+  .fi::placeholder{color:#bbb;}
+  textarea.fi{resize:vertical;min-height:80px;}
+  .btn-contactar{padding:13px;border-radius:10px;background:var(--red);color:var(--white);border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:background .2s,transform .2s;}
+  .btn-contactar:hover{background:var(--red-dark);transform:translateY(-1px);}
+  .btn-contactar:disabled{background:var(--gray);cursor:not-allowed;transform:none;}
+  .form-msg{font-size:12px;text-align:center;padding:8px;border-radius:7px;display:none;}
+  .form-msg.ok{background:var(--green-lt);color:var(--green);display:block;}
+  .form-msg.err{background:var(--red-pale);color:var(--red);display:block;}
+  .divider-line{height:1px;background:var(--gray-lt);margin:16px 0;}
+  .agenda-frase{font-size:13px;font-weight:600;color:var(--charcoal);text-align:center;margin-bottom:14px;}
+  .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;background:#25D366;color:var(--white);border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px;transition:background .2s;}
+  .wa-btn:hover{background:#1da851;}
+  .wa-btn svg{width:16px;height:16px;fill:white;}
+  .similares{padding:60px 0;border-top:1px solid var(--gray-lt);}
+  .similares-title{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;margin-bottom:28px;text-transform:uppercase;letter-spacing:0.5px;}
+  .sim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .sim-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:transform .3s,box-shadow .3s;cursor:pointer;}
+  .sim-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,0.1);}
+  .sim-img{aspect-ratio:16/10;overflow:hidden;background:var(--gray-lt);position:relative;}
+  .sim-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+  .sim-card:hover .sim-img img{transform:scale(1.05);}
+  .sim-ph{width:100%;height:100%;}
+  .ph-1{background:linear-gradient(135deg,#d4a5a5,#8b4040);}
+  .ph-2{background:linear-gradient(135deg,#a5b4d4,#405d8b);}
+  .ph-3{background:linear-gradient(135deg,#a5d4b4,#408b54);}
+  .sim-badge{position:absolute;top:10px;left:10px;background:var(--red);color:var(--white);font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;}
+  .sim-badge.arriendo{background:var(--blue);}
+  .sim-body{padding:14px 16px;}
+  .sim-price{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--red);margin-bottom:3px;}
+  .sim-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+  .sim-loc{font-size:11px;color:var(--gray);}
+  .sk{background:linear-gradient(90deg,var(--gray-lt) 25%,#f0ece8 50%,var(--gray-lt) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  .error-wrap{text-align:center;padding:120px 40px;margin-top:72px;}
+  .error-wrap h2{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .error-wrap p{font-size:15px;color:var(--gray);margin-bottom:20px;}
+  .btn-volver{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:var(--white);padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;}
+  .wa-float{position:fixed;bottom:28px;right:28px;z-index:200;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform .2s;text-decoration:none;}
+  .wa-float:hover{transform:scale(1.1);}
+  .wa-float svg{width:28px;height:28px;fill:white;}
+  .wa-tooltip{position:absolute;right:64px;background:var(--charcoal);color:var(--white);font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .wa-float:hover .wa-tooltip{opacity:1;}
+  .wa-tooltip::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:5px solid var(--charcoal);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+  @media(max-width:900px){
+    nav{padding:14px 20px;}
+    .hamburger{display:flex;}
+    .nav-links{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;background:var(--white);padding:90px 32px 40px;gap:0;transform:translateY(-100%);transition:transform .35s;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:99;}
+    .nav-links.open{transform:translateY(0);}
+    .nav-links li{border-bottom:1px solid var(--gray-lt);}
+    .nav-links a{display:block!important;padding:14px 0!important;font-size:17px!important;color:var(--charcoal)!important;}
+    .galeria-wrap{margin-top:108px;}
+    .galeria-main{height:380px;min-height:auto;}
+    .galeria-main-ph{height:380px;min-height:auto;}
+    .galeria-badge{top:20px;left:16px;}
+    .container{padding:0 16px;}
+    .detail-grid{grid-template-columns:1fr;gap:24px;padding:24px 0 60px;}
+    .contact-card{position:static;}
+    .features-bar{flex-wrap:wrap;}
+    .feat-item{min-width:50%;}
+    .sim-grid{grid-template-columns:1fr;}
+    footer{padding:40px 24px 24px;}
+    .footer-top{grid-template-columns:1fr;} .footer-bottom{flex-direction:column;gap:16px;align-items:center;}
+  }
+
+  /* LIGHTBOX */
+  .lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .lb-overlay.open{opacity:1;pointer-events:all;}
+  .lb-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:4px;user-select:none;display:block;}
+  .lb-close{position:fixed;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.8);font-size:36px;cursor:pointer;z-index:1001;line-height:1;transition:color .2s;padding:4px;}
+  .lb-close:hover{color:#fff;}
+  .lb-arrow{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:white;cursor:pointer;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1001;transition:background .2s;backdrop-filter:blur(4px);}
+  .lb-arrow:hover{background:rgba(255,255,255,0.28);}
+  .lb-arrow svg{width:24px;height:24px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .lb-prev{left:12px;}
+  .lb-next{right:12px;}
+  .lb-counter{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.65);font-size:13px;font-weight:600;z-index:1001;background:rgba(0,0,0,0.4);padding:4px 12px;border-radius:100px;}
+  .galeria-main{cursor:zoom-in;}
+  footer{background:#111;padding:60px 80px 32px;color:rgba(255,255,255,0.5);}
+  .footer-top{display:flex;flex-wrap:wrap;gap:48px;justify-content:space-between;margin-bottom:48px;} .footer-top > div:first-child{flex:1 1 280px;} .footer-col{flex:1 1 160px;min-width:160px;}
+  .footer-flogo{display:flex;align-items:center;margin-bottom:14px;}
+  .footer-flogo img{height:60px;max-width:200px;object-fit:contain;filter:brightness(0) invert(1);}
+  .footer-desc{font-size:14px;line-height:1.7;max-width:260px;}
+  .footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--white);margin-bottom:20px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .footer-col ul a{font-size:14px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s;}
+  .footer-col ul a:hover{color:var(--red);}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+  .footer-social{display:flex;gap:20px;align-items:center;}
+  .social-link{color:rgba(255,255,255,0.5);transition:color .2s;display:flex;}
+  .social-link:hover{color:var(--red);}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <a class="logo" href="index.html" onclick="window.location.href='index.html';return false;">
+    <img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Logo Cuencasa">
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="propiedades.html">Propiedades</a></li>
+    <li><a href="proyectos.html">Proyectos</a></li>
+    <li><a href="nosotros.html">Nosotros</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="index.html#contacto" class="nav-cta">Hablar con un asesor</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+
+<div id="contenido"></div>
+
+<a class="wa-float" id="wa-btn" href="#" target="_blank">
+  <span class="wa-tooltip">Necesitas ayuda?</span>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const API = CONFIG.API;
+const id  = new URLSearchParams(window.location.search).get('id');
+const colores = ['ph-1','ph-2','ph-3'];
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!id) { mostrarError('ID no encontrado','No se especifico una propiedad valida.'); return; }
+  cargarPropiedad();
+  cargarWhatsapp();
+});
+
+window.addEventListener("devicemotion", function(e) {
+  var iframe = document.getElementById('panoee-tour');
+  if (!iframe) return;
+  iframe.contentWindow.postMessage({ type:"devicemotion", deviceMotionEvent:{ acceleration:{ x:e.acceleration.x, y:e.acceleration.y, z:e.acceleration.z }, accelerationIncludingGravity:{ x:e.accelerationIncludingGravity.x, y:e.accelerationIncludingGravity.y, z:e.accelerationIncludingGravity.z }, rotationRate:{ alpha:e.rotationRate.alpha, beta:e.rotationRate.beta, gamma:e.rotationRate.gamma }, interval:e.interval, timeStamp:e.timeStamp } }, "*");
+});
+
+// CAMBIO 1: guardar numero en window._waNumero para usarlo en el boton del sidebar
+async function cargarWhatsapp() {
+  try {
+    const res = await fetch(`${API}/api/configuracion`); const c = await res.json();
+    const num = c.wa_numero || '593999999999';
+    const msg = c.wa_mensaje || 'Hola, me interesa una propiedad en Cuencasa';
+    document.getElementById('wa-btn').href = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+    window._waNumero = num;
+  } catch(e) {
+    window._waNumero = '593999999999';
+  }
+}
+
+function buildYoutubeEmbed(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+
+function buildMapEmbed(link) {
+  if (!link) return null;
+  const match = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (match) return `https://www.google.com/maps?q=${match[1]},${match[2]}&output=embed&z=17`;
+  const match2 = link.match(/3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (match2) return `https://www.google.com/maps?q=${match2[1]},${match2[2]}&output=embed&z=17`;
+  return null;
+}
+
+async function cargarPropiedad() {
+  document.getElementById('contenido').innerHTML = renderSkeleton();
+  try {
+    const [resProp, resSim] = await Promise.all([
+      fetch(`${API}/api/propiedades/${id}`),
+      fetch(`${API}/api/propiedades?destacadas=1`)
+    ]);
+    const p   = await resProp.json();
+    const sim = await resSim.json();
+    if (!resProp.ok) { mostrarError('Propiedad no encontrada','La propiedad que buscas no existe.'); return; }
+    document.title = `Cuencasa - ${p.titulo}`;
+    document.getElementById('contenido').innerHTML = renderPropiedad(p, sim.filter(s=>s.id!=id).slice(0,3));
+    if (p.fotos && p.fotos.length > 0) seleccionarFoto(p.fotos[0].url, 0);
+  } catch(e) { mostrarError('Error de conexion','No se pudo conectar con el servidor.'); }
+}
+
+function renderPropiedad(p, similares) {
+  const precio     = Number(p.precio).toLocaleString();
+  const precioSub  = p.tipo === 'Arriendo' ? 'por mes' : 'precio de venta';
+  const fotoMain   = p.fotos && p.fotos.length > 0 ? p.fotos[0].url : null;
+  const ubicacion  = [p.sector, p.parroquia].filter(Boolean).join(', ') || p.zona || '';
+  const esArriendo = p.tipo === 'Arriendo';
+
+  const feats = [];
+  if (p.habitaciones) feats.push({icon:'<svg viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>', val:p.habitaciones, label:'Habitaciones'});
+  if (p.banos)        feats.push({icon:'<svg viewBox="0 0 24 24"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1Z"/><path d="M6 12V5a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18"/></svg>', val:p.banos,        label:'Banos'});
+  if (!esArriendo && p.metros)              feats.push({icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>', val:`${p.metros}m2`,              label:'Total'});
+  if (!esArriendo && p.metros_construccion) feats.push({icon:'<svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="8" rx="1"/><path d="M17 14v7"/><path d="M7 14v7"/><path d="M17 3v3"/><path d="M7 3v3"/><path d="M10 14 10 21"/><path d="M14 14 14 21"/></svg>', val:`${p.metros_construccion}m2`, label:'Construccion'});
+  if (!esArriendo && p.metros_terreno)      feats.push({icon:'<svg viewBox="0 0 24 24"><path d="M2 22 16 8l2 2L4 22Z"/><path d="m10 14 6-6"/><path d="M17.4 7.6a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M22 22H2"/></svg>', val:`${p.metros_terreno}m2`,      label:'Terreno'});
+  if (!esArriendo && p.plantas)             feats.push({icon:'<svg viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>', val:p.plantas,                    label:'Plantas'});
+  if (p.parqueadero > 0)                    feats.push({icon:'<svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>', val:p.parqueadero,                 label:'Parqueaderos'});
+  if (!esArriendo && p.antiguedad != null)  feats.push({icon:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>', val:`${p.antiguedad} anos`,       label:'Antiguedad'});
+  if (p.tipo_unidad)                        feats.push({icon: p.tipo_unidad==='Condominio'?'<svg viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>':'<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>', val:p.tipo_unidad, label:'Tipo de Inmueble'});
+
+  let mapaHtml = '';
+  if (p.link_mapa) {
+    const embedUrl = buildMapEmbed(p.link_mapa);
+    if (embedUrl) {
+      mapaHtml = `
+      <div class="sec-wrap">
+        <div class="sec-title">Ubicacion</div>
+        <div class="mapa-wrap"><iframe src="${embedUrl}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+        <a class="mapa-btn" href="${p.link_mapa}" target="_blank" style="margin-top:10px">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Ver en Google Maps
+        </a>
+      </div>`;
+    }
+  }
+
+  let videoHtml = '';
+  if (p.link_video) {
+    const embedUrl = buildYoutubeEmbed(p.link_video);
+    if (embedUrl) {
+      videoHtml = `
+      <div class="sec-wrap">
+        <div class="sec-title">Video</div>
+        <div class="video-wrap"><iframe src="${embedUrl}" allowfullscreen loading="lazy"></iframe></div>
+      </div>`;
+    }
+  }
+
+  let recorridoHtml = '';
+  if (p.link_recorrido) {
+    recorridoHtml = `
+    <div class="sec-wrap">
+      <div class="sec-title">Recorrido Virtual 360</div>
+      <div class="recorrido-wrap">
+        <iframe id="panoee-tour" src="${p.link_recorrido}" frameborder="0" scrolling="no" allowvr="yes" allow="vr; xr; accelerometer; gyroscope; autoplay;" allowfullscreen webkitallowfullscreen mozallowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>`;
+  }
+
+  // CAMBIO 2: mensaje WhatsApp del sidebar incluye titulo, precio, ubicacion y link
+  const urlPropiedad = `${window.location.origin}${window.location.pathname}?id=${p.id}`;
+  const msgWa = `Hola Cuencasa, me interesa esta propiedad:%0A*${p.titulo}*%0APrecio: $${precio}%0AUbicación: ${ubicacion}, Cuenca%0AVer: ${urlPropiedad}`;
+  const numWa = window._waNumero || '593999999999';
+
+  // Actualizar el botón flotante también con el mismo mensaje
+  const btnWaFlotante = document.getElementById('wa-btn');
+  if (btnWaFlotante) btnWaFlotante.href = `https://wa.me/${numWa}?text=${msgWa}`;
+
+  window._fotos = p.fotos || [];
+
+  return `
+  <div class="galeria-wrap">
+    ${fotoMain
+      ? `<img class="galeria-main" id="foto-main" src="${fotoMain}" alt="${p.titulo}" onclick="abrirLightbox(_fotoActual)">`
+      : `<div class="galeria-main-ph"></div>`}
+    <span class="galeria-badge ${p.tipo==='Arriendo'?'arriendo':''}">${p.tipo}</span>
+    ${p.fotos && p.fotos.length > 1 ? `
+    <button class="galeria-arrow galeria-arrow-prev" onclick="navegarFoto(-1)" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="galeria-arrow galeria-arrow-next" onclick="navegarFoto(1)" aria-label="Siguiente foto">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="galeria-thumbs">
+      ${p.fotos.map((f,i)=>`<img class="thumb ${i===0?'active':''}" src="${f.url}" alt="" onclick="seleccionarFoto('${f.url}',${i})">`).join('')}
+    </div>` : ''}
+  </div>
+
+  <div class="container">
+    <div class="detail-grid">
+      <div>
+        <div class="detail-precio">$${precio}</div>
+        <div class="detail-precio-sub">${precioSub}</div>
+        <h1 class="detail-titulo">${p.titulo}</h1>
+        <div class="detail-loc">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${[ubicacion, 'Cuenca, Ecuador'].filter(Boolean).join(', ')}
+        </div>
+        ${feats.length ? `
+        <div class="features-bar">
+          ${feats.map(f=>`<div class="feat-item"><div class="feat-icon">${f.icon}</div><div class="feat-val">${f.val}</div><div class="feat-label">${f.label}</div></div>`).join('')}
+        </div>` : ''}
+        ${p.descripcion ? `<div class="sec-wrap"><div class="sec-title">Descripcion</div><p class="descripcion">${p.descripcion}</p></div>` : ''}
+        ${videoHtml}
+        ${recorridoHtml}
+        ${mapaHtml}
+      </div>
+
+      <div>
+        <div class="contact-card">
+          <div class="contact-title">Te interesa?</div>
+          <div class="contact-sub">Contactanos rapido por WhatsApp o agenda una visita.</div>
+          <div class="contact-form">
+            <input class="fi" type="text"  id="c-nombre"   placeholder="Tu nombre completo">
+            <input class="fi" type="email" id="c-email"    placeholder="Tu correo electronico">
+            <input class="fi" type="tel"   id="c-telefono" placeholder="Tu telefono / WhatsApp">
+            <textarea class="fi" id="c-mensaje" placeholder="Me interesa esta propiedad..."></textarea>
+            <p style="font-size:11px;font-style:italic;font-weight:700;color:var(--gray);text-align:center;margin-bottom:4px;">Al hacer clic acepta el tratamiento de sus datos personales.</p>
+            <button class="btn-contactar" onclick="enviarConsulta(${p.id},'${p.titulo.replace(/'/g,"\\'")}','${precio}','${ubicacion.replace(/'/g,"\\'")}')">Quiero mas informacion</button>
+            <div class="form-msg" id="form-msg"></div>
+          </div>
+          <p style="font-weight:700;text-align:center;font-size:13px;margin:14px 0 8px;">¿Ya tienes toda la información? Agenda una visita</p>
+          <a class="wa-btn" href="https://wa.me/${numWa}?text=${msgWa}" target="_blank" id="wa-contact-btn">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            Consultar por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    ${!esArriendo && similares.length > 0 ? `
+    <div class="similares">
+      <div class="similares-title">Propiedades similares</div>
+      <div class="sim-grid">
+        ${similares.map((s,i)=>`
+        <div class="sim-card" onclick="verPropiedad(${s.id})">
+          <div class="sim-img">
+            ${s.foto_principal ? `<img src="${s.foto_principal}" alt="">` : `<div class="sim-ph ${colores[i%3]}"></div>`}
+            <span class="sim-badge ${s.tipo==='Arriendo'?'arriendo':''}">${s.tipo}</span>
+          </div>
+          <div class="sim-body">
+            <div class="sim-price">$${Number(s.precio).toLocaleString()}</div>
+            <div class="sim-name">${s.titulo}</div>
+            <div class="sim-loc">${[s.sector,s.parroquia].filter(Boolean).join(', ')||s.zona||'Cuenca'}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
+  </div>`;
+}
+
+let _fotoActual = 0;
+
+function seleccionarFoto(url, idx) {
+  _fotoActual = idx;
+  const main = document.getElementById('foto-main');
+  if (main) main.src = url;
+  document.querySelectorAll('.thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+}
+
+function navegarFoto(dir) {
+  const fotos = window._fotos;
+  if (!fotos || fotos.length < 2) return;
+  _fotoActual = (_fotoActual + dir + fotos.length) % fotos.length;
+  seleccionarFoto(fotos[_fotoActual].url, _fotoActual);
+  const thumbs = document.querySelectorAll('.galeria-thumbs .thumb');
+  const thumbsWrap = document.querySelector('.galeria-thumbs');
+  const thumb = thumbs[_fotoActual];
+  if (thumbsWrap && thumb) {
+    thumbsWrap.scrollLeft = thumb.offsetLeft - thumbsWrap.offsetWidth / 2 + thumb.offsetWidth / 2;
+  }
+}
+
+// CAMBIO 3: enviarConsulta recibe precio y ubicacion e incluye todo en el mensaje
+async function enviarConsulta(propId, propTitulo, precio, ubicacion) {
+  const nombre  = document.getElementById('c-nombre').value.trim();
+  const email   = document.getElementById('c-email').value.trim();
+  const msgEl   = document.getElementById('form-msg');
+  if (!nombre||!email) { msgEl.textContent='Completa tu nombre y correo.'; msgEl.className='form-msg err'; return; }
+  const btn = document.querySelector('.btn-contactar');
+  btn.disabled=true; btn.textContent='Enviando...';
+  const urlPropiedad = `${window.location.origin}${window.location.pathname}?id=${propId}`;
+  const mensajeUsuario = document.getElementById('c-mensaje').value.trim();
+  const mensajeFinal = mensajeUsuario
+    ? `${mensajeUsuario}\n\n--- Propiedad de interes ---\n${propTitulo}\nPrecio: $${precio}\nUbicacion: ${ubicacion}, Cuenca\nVer: ${urlPropiedad}`
+    : `Me interesa la propiedad: ${propTitulo}\nPrecio: $${precio}\nUbicacion: ${ubicacion}, Cuenca\nVer: ${urlPropiedad}`;
+  try {
+    const res = await fetch(`${API}/api/mensajes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      nombre,
+      email,
+      telefono:  document.getElementById('c-telefono').value.trim(),
+      interes:   `Propiedad: ${propTitulo} | $${precio} | ${ubicacion}`,
+      mensaje:   mensajeFinal
+    })});
+    if (res.ok) { msgEl.textContent='Mensaje enviado! Te contactamos pronto.'; msgEl.className='form-msg ok'; ['c-nombre','c-email','c-telefono','c-mensaje'].forEach(i=>document.getElementById(i).value=''); }
+    else throw new Error();
+  } catch { msgEl.textContent='Error al enviar. Intenta por WhatsApp.'; msgEl.className='form-msg err'; }
+  finally { btn.disabled=false; btn.textContent='Quiero mas informacion'; }
+}
+
+function verPropiedad(id) { window.location.href=`propiedad.html?id=${id}`; }
+
+function renderSkeleton() {
+  return `<div style="margin-top:72px"><div class="sk" style="height:520px;border-radius:0"></div></div>
+  <div class="container"><div class="detail-grid" style="padding-top:40px">
+    <div><div class="sk" style="height:52px;width:200px;margin-bottom:12px"></div><div class="sk" style="height:36px;width:380px;margin-bottom:20px"></div><div class="sk" style="height:80px;margin-bottom:28px"></div><div class="sk" style="height:120px"></div></div>
+    <div class="sk" style="height:380px;border-radius:16px"></div>
+  </div></div>`;
+}
+
+function mostrarError(titulo, desc) {
+  document.getElementById('contenido').innerHTML=`<div class="error-wrap"><h2>${titulo}</h2><p>${desc}</p><a class="btn-volver" href="propiedades.html">Ver propiedades</a></div>`;
+}
+
+function toggleMenu() {
+  const h=document.getElementById('hamburger'); const n=document.getElementById('nav-links');
+  h.classList.toggle('open'); n.classList.toggle('open');
+  document.body.style.overflow=n.classList.contains('open')?'hidden':'';
+}
+window.addEventListener('scroll',()=>{document.getElementById('nav').style.boxShadow=scrollY>40?'0 2px 24px rgba(0,0,0,0.1)':'';});
+
+let _lbIdx = 0;
+
+function abrirLightbox(idx) {
+  const fotos = window._fotos;
+  if (!fotos || fotos.length === 0) return;
+  _lbIdx = idx;
+  actualizarLightbox();
+  document.getElementById('lb-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarLightbox() {
+  document.getElementById('lb-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function actualizarLightbox() {
+  const fotos = window._fotos;
+  document.getElementById('lb-img').src = fotos[_lbIdx].url;
+  document.getElementById('lb-counter').textContent = `${_lbIdx + 1} / ${fotos.length}`;
+  const multi = fotos.length > 1;
+  document.querySelector('.lb-prev').style.display = multi ? '' : 'none';
+  document.querySelector('.lb-next').style.display = multi ? '' : 'none';
+}
+
+function navegarLightbox(dir) {
+  const fotos = window._fotos;
+  if (!fotos || fotos.length < 2) return;
+  _lbIdx = (_lbIdx + dir + fotos.length) % fotos.length;
+  actualizarLightbox();
+  seleccionarFoto(fotos[_lbIdx].url, _lbIdx);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lb-overlay').classList.contains('open')) return;
+  if (e.key === 'Escape') cerrarLightbox();
+  if (e.key === 'ArrowLeft') navegarLightbox(-1);
+  if (e.key === 'ArrowRight') navegarLightbox(1);
+});
+
+(function() {
+  let _lbTouchX = null;
+  document.addEventListener('DOMContentLoaded', function() {
+    const ov = document.getElementById('lb-overlay');
+    ov.addEventListener('touchstart', e => { _lbTouchX = e.touches[0].clientX; }, {passive:true});
+    ov.addEventListener('touchend', e => {
+      if (_lbTouchX === null) return;
+      const dx = e.changedTouches[0].clientX - _lbTouchX;
+      if (Math.abs(dx) > 50) navegarLightbox(dx < 0 ? 1 : -1);
+      _lbTouchX = null;
+    });
+    ov.addEventListener('click', function(e) { if (e.target === ov) cerrarLightbox(); });
+  });
+})();
+</script>
+
+<div class="lb-overlay" id="lb-overlay">
+  <button class="lb-close" onclick="cerrarLightbox()" aria-label="Cerrar">&#x2715;</button>
+  <img class="lb-img" id="lb-img" src="" alt="">
+  <button class="lb-arrow lb-prev" onclick="navegarLightbox(-1)" aria-label="Foto anterior">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="lb-arrow lb-next" onclick="navegarLightbox(1)" aria-label="Siguiente foto">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-flogo"><img src="https://res.cloudinary.com/da2xskien/image/upload/v1777507171/2_annebk_1_neaoqm_uugkk1.png" alt="Cuencasa"></div>
+      <p class="footer-desc">La plataforma de bienes raices mas confiable de Cuenca, Ecuador.</p>
+    </div>
+    <div class="footer-col"><h4>Propiedades</h4><ul><li><a href="propiedades.html">Todas las propiedades</a></li><li><a href="propiedades.html?tipo=Venta">Casas en venta</a></li><li><a href="propiedades.html?tipo=Arriendo">Arriendos</a></li></ul></div>
+    <div class="footer-col"><h4>Cuencasa</h4><ul><li><a href="nosotros.html">Nosotros</a></li><li><a href="proyectos.html">Proyectos</a></li><li><a href="index.html#contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>2026 Cuencasa · Cuenca, Ecuador</span>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/profile.php?id=61569156524239" target="_blank" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="https://www.instagram.com/cuencasa.agencia/" target="_blank" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+      <a href="https://www.tiktok.com/@cuencasa.agencia" target="_blank" class="social-link" aria-label="TikTok"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.19 8.19 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg></a>
+      <a href="mailto:agenciacuencasa@gmail.com" class="social-link" aria-label="Email"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* ══════════════════════════════════════════════════
+   Cuencasa — Global Frontend CSS
+   Fuentes: Barlow Condensed (títulos) + DM Sans (cuerpo)
+   ══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap');
+
+/* ── VARIABLES ─────────────────────────────────────── */
+:root {
+  --red:        #C8102E;
+  --red-dark:   #9B0C22;
+  --red-light:  #E8203E;
+  --red-pale:   #FFF0F2;
+  --white:      #FFFFFF;
+  --off-white:  #FAF8F6;
+  --charcoal:   #1C1C1E;
+  --gray:       #6B6B6B;
+  --gray-light: #E8E4E1;
+  --green:      #1E7E34;
+  --green-lt:   #D4EDDA;
+  --blue:       #185FA5;
+  --blue-lt:    #D6E4F0;
+
+  /* Tipografía */
+  --font-heading:   'Barlow Condensed', sans-serif;
+  --font-body:      'DM Sans', sans-serif;
+  --font-serif:     'Playfair Display', serif;
+}
+
+/* ── RESET ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--off-white); color: var(--charcoal); overflow-x: hidden; line-height: 1.5; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; }
+
+p {
+  white-space: pre-line;
+}
+
+/* ── TIPOGRAFÍA GLOBAL ─────────────────────────────── */
+
+/* Todos los h1 usan Barlow Condensed */
+h1 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+
+/* h2 y h3 también Barlow Condensed */
+h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+
+/* Títulos de sección con clase s-title */
+.s-title {
+  font-family: var(--font-heading) !important;
+  font-weight: 800 !important;
+  font-size: clamp(32px, 3.5vw, 52px) !important;
+  letter-spacing: 0px !important;
+  line-height: 1.05 !important;
+  text-transform: uppercase;
+}
+
+.s-title em {
+  color: var(--red);
+  font-style: italic;
+  font-weight: 800;
+}
+
+/* Hero title */
+.hero-title {
+  font-family: var(--font-heading) !important;
+  font-size: clamp(56px, 8vw, 110px) !important;
+  font-weight: 800 !important;
+  line-height: 0.95 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.hero-title strong {
+  font-weight: 900 !important;
+  display: block;
+}
+
+/* Títulos de cards y componentes */
+.card-price,
+.card-name,
+.detail-titulo,
+.detail-precio {
+  font-family: var(--font-heading) !important;
+}
+
+.detail-titulo {
+  font-size: clamp(28px, 3vw, 42px) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase;
+}
+
+/* Eyebrows (etiquetas pequeñas sobre títulos) */
+.s-eyebrow,
+.hero-eyebrow,
+.page-header .breadcrumb {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Nav */
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Botones */
+.btn-outline,
+.hero-cta,
+.hero-cta-btn,
+.nav-cta {
+  font-family: var(--font-heading) !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase;
+}
+
+/* ── UTILIDADES ────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Divider rojo */
+.divider { width: 48px; height: 3px; background: var(--red); border-radius: 2px; margin: 16px 0 28px; }
+
+/* WhatsApp flotante */
+.wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.4); transition: transform .2s, box-shadow .2s; text-decoration: none; }
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+.wa-float svg { width: 28px; height: 28px; fill: white; }
+.wa-tooltip { position: absolute; right: 64px; background: var(--charcoal); color: var(--white); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; font-family: var(--font-body); }
+.wa-float:hover .wa-tooltip { opacity: 1; }
+.wa-tooltip::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 5px solid var(--charcoal); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+
+/* ── RESPONSIVE BASE ───────────────────────────────── */
+@media(max-width: 900px) {
+  .hero-title { font-size: clamp(48px, 12vw, 80px) !important; }
+  .s-title { font-size: clamp(28px, 7vw, 40px) !important; }
+  .detail-titulo { font-size: clamp(24px, 5vw, 32px) !important; }
+}

@@ -1,0 +1,50 @@
+# Dependencias
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# Base de datos local
+*.sql
+*.sqlite
+*.sqlite3
+database/migrations/*.local.*
+
+# Cloudinary / credenciales de servicios
+cloudinary.config.js
+
+# OS
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code local
+.claude/settings.local.json
+
+# Logs
+logs/
+*.log
+
+# Build / dist
+dist/
+build/
+.tmp/
+.claude/
+cargar-notion.js

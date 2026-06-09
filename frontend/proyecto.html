@@ -68,7 +68,7 @@
   .descripcion{font-size:15px;color:var(--gray);line-height:1.8;white-space:pre-line;}
 
   /* UNIDADES */
-  .unidades-grid{column-count:2;column-gap:12px;margin-top:4px;}
+  .unidades-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
   .unidad-card{border:1px solid var(--gray-lt);border-radius:10px;padding:14px 16px;background:var(--white);transition:border-color .2s,box-shadow .2s;break-inside:avoid;margin-bottom:12px;}
   .unidad-card:hover{border-color:var(--red);box-shadow:0 4px 16px rgba(200,16,46,0.08);}
   .unidad-tipo{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:4px;}
@@ -142,7 +142,7 @@
     .container{padding:0 16px;}
     .detail-grid{grid-template-columns:1fr;gap:24px;padding:24px 0 60px;}
     .contact-card{position:static;}
-    .unidades-grid{column-count:1;}
+    .unidades-grid{grid-template-columns:1fr;}
     .features-bar{flex-wrap:wrap;}
     .feat-item{min-width:50%;}
   }
@@ -338,7 +338,7 @@ function renderProyecto(p) {
         <div class="sec-wrap">
           <div class="sec-title"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Unidades disponibles (${unidadesDisp} de ${p.unidades.length})</div>
           <div class="unidades-grid">
-            ${[...p.unidades].sort((a,b)=>(Number(a.precio)||0)-(Number(b.precio)||0)).map(u => `
+            ${[...p.unidades].sort((a,b)=>{const na=(a.titulo||'').match(/\d+/);const nb=(b.titulo||'').match(/\d+/);if(na&&nb)return parseInt(na[0])-parseInt(nb[0]);return(a.titulo||'').localeCompare(b.titulo||'','es',{numeric:true});}).map(u => `
             <div class="unidad-card">
               <div class="unidad-tipo">${u.tipo||'Unidad'}</div>
               <div class="unidad-titulo">${u.titulo||'Sin título'}</div>

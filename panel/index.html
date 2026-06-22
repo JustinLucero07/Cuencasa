@@ -355,6 +355,8 @@
     <div class="form-grid">
       <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="equipo-nombre" placeholder="Ej. Juan Perez"></div>
       <div class="fg"><label class="fl">Cargo</label><input class="fi" id="equipo-cargo" placeholder="Ej. Asesor Inmobiliario"></div>
+      <div class="fg"><label class="fl">Telefono</label><input class="fi" id="equipo-telefono" placeholder="Ej. 0999999999"></div>
+      <div class="fg"><label class="fl">Rol</label><input class="fi" id="equipo-rol" placeholder="Ej. Administrador"></div>
       <div class="fg full"><label class="fl">Descripcion</label><textarea class="fi" id="equipo-desc" rows="3" placeholder="Descripcion del miembro..."></textarea></div>
       <div class="fg full">
         <label class="fl">Foto del miembro</label>
@@ -713,6 +715,8 @@ async function cargarEquipo() {
         <div class="equipo-info">
           <div class="equipo-nombre">${m.nombre}</div>
           <div class="equipo-cargo">${m.cargo||''}</div>
+          ${m.rol?`<div class="equipo-cargo">${m.rol}</div>`:''}
+          ${m.telefono?`<div class="equipo-cargo">${m.telefono}</div>`:''}
           ${m.instagram?`<div class="equipo-ig">${m.instagram}</div>`:''}
           <div class="equipo-actions">
             <button class="btn btn-secondary" onclick="editarEquipo(${m.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
@@ -753,7 +757,7 @@ function resetFotoEquipo(urlActual) {
 }
 
 function abrirModalEquipo() {
-  ['equipo-id','equipo-nombre','equipo-cargo','equipo-desc','equipo-foto','equipo-ig'].forEach(id=>document.getElementById(id).value='');
+  ['equipo-id','equipo-nombre','equipo-cargo','equipo-telefono','equipo-rol','equipo-desc','equipo-foto','equipo-ig'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('equipo-orden').value = 0;
   resetFotoEquipo(null);
   document.getElementById('modal-equipo-titulo').textContent = 'Nuevo miembro';
@@ -767,6 +771,8 @@ async function editarEquipo(id) {
     document.getElementById('equipo-id').value     = m.id;
     document.getElementById('equipo-nombre').value = m.nombre;
     document.getElementById('equipo-cargo').value  = m.cargo||'';
+    document.getElementById('equipo-telefono').value = m.telefono||'';
+    document.getElementById('equipo-rol').value    = m.rol||'';
     document.getElementById('equipo-desc').value   = m.descripcion||'';
     document.getElementById('equipo-foto').value   = m.foto_url||'';
     resetFotoEquipo(m.foto_url||null);
@@ -781,7 +787,7 @@ async function guardarEquipo() {
   const id     = document.getElementById('equipo-id').value;
   const nombre = document.getElementById('equipo-nombre').value.trim();
   if (!nombre) { toast('El nombre es obligatorio','err'); return; }
-  const body = { nombre, cargo:document.getElementById('equipo-cargo').value.trim(), descripcion:document.getElementById('equipo-desc').value.trim(), foto_url:document.getElementById('equipo-foto').value.trim()||null, instagram:document.getElementById('equipo-ig').value.trim()||null, orden:Number(document.getElementById('equipo-orden').value)||0, activo:1 };
+  const body = { nombre, cargo:document.getElementById('equipo-cargo').value.trim(), telefono:document.getElementById('equipo-telefono').value.trim()||null, rol:document.getElementById('equipo-rol').value.trim()||null, descripcion:document.getElementById('equipo-desc').value.trim(), foto_url:document.getElementById('equipo-foto').value.trim()||null, instagram:document.getElementById('equipo-ig').value.trim()||null, orden:Number(document.getElementById('equipo-orden').value)||0, activo:1 };
   try {
     let miembroId = id;
     if (id) {

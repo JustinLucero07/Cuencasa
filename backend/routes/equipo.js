@@ -11,16 +11,16 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { nombre, cargo, descripcion, foto_url, instagram, orden } = req.body;
-    const [r] = await db.query('INSERT INTO equipo (nombre, cargo, descripcion, foto_url, instagram, orden) VALUES (?,?,?,?,?,?)', [nombre, cargo, descripcion, foto_url, instagram, orden||0]);
+    const { nombre, cargo, telefono, rol, descripcion, foto_url, instagram, orden } = req.body;
+    const [r] = await db.query('INSERT INTO equipo (nombre, cargo, telefono, rol, descripcion, foto_url, instagram, orden) VALUES (?,?,?,?,?,?,?,?)', [nombre, cargo, telefono, rol, descripcion, foto_url, instagram, orden||0]);
     res.status(201).json({ id: r.insertId });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 router.put('/:id', async (req, res) => {
   try {
-    const { nombre, cargo, descripcion, foto_url, instagram, orden, activo } = req.body;
-    await db.query('UPDATE equipo SET nombre=?, cargo=?, descripcion=?, foto_url=?, instagram=?, orden=?, activo=? WHERE id=?', [nombre, cargo, descripcion, foto_url, instagram, orden||0, activo??1, req.params.id]);
+    const { nombre, cargo, telefono, rol, descripcion, foto_url, instagram, orden, activo } = req.body;
+    await db.query('UPDATE equipo SET nombre=?, cargo=?, telefono=?, rol=?, descripcion=?, foto_url=?, instagram=?, orden=?, activo=? WHERE id=?', [nombre, cargo, telefono, rol, descripcion, foto_url, instagram, orden||0, activo??1, req.params.id]);
     res.json({ mensaje: 'Actualizado' });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

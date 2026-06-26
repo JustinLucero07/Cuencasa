@@ -37,6 +37,7 @@ app.use('/api/proyectos',  proyectosRoutes);
 app.use('/api/testimonios', require('./routes/testimonios'));
 app.use('/api/equipo',      require('./routes/equipo'));
 app.use('/api/servicios',   require('./routes/servicios'));
+app.use('/api/creditos',    require('./routes/creditos'));
 
 
 app.use('/api/configuracion', require('./routes/configuracion'));

@@ -1,6 +1,18 @@
 const db = require('../config/db');
 const { cloudinary } = require('../config/cloudinary');
 
+// Reemplaza los sectores relacionados de una propiedad por la lista recibida.
+// `sectores` es un arreglo de ids de sector (puede venir undefined o vacio).
+const sincronizarSectoresRelacionados = async (propiedadId, sectores) => {
+  await db.query('DELETE FROM propiedad_sectores WHERE propiedad_id = ?', [propiedadId]);
+  if (!Array.isArray(sectores) || !sectores.length) return;
+  const ids = [...new Set(sectores.map(Number).filter(Boolean))];
+  if (!ids.length) return;
+  const values = ids.map(() => '(?, ?)').join(', ');
+  const params = ids.flatMap(id => [propiedadId, id]);
+  await db.query(`INSERT INTO propiedad_sectores (propiedad_id, sector_id) VALUES ${values}`, params);
+};
+
 const getPropiedades = async (req, res) => {
   try {
     const { parroquia_id, sector_id, tipo, precio_max, precio_min, habitaciones, destacadas } = req.query;
@@ -75,7 +87,15 @@ const getPropiedad = async (req, res) => {
       [req.params.id]
     );
 
-    res.json({ ...propiedades[0], fotos });
+    const [relacionados] = await db.query(
+      `SELECT s.id, s.nombre
+       FROM propiedad_sectores ps
+       JOIN sectores s ON s.id = ps.sector_id
+       WHERE ps.propiedad_id = ?`,
+      [req.params.id]
+    );
+
+    res.json({ ...propiedades[0], fotos, sectores_relacionados: relacionados });
 
   } catch (error) {
     console.error('Error getPropiedad:', error.message);
@@ -85,13 +105,14 @@ const getPropiedad = async (req, res) => {
 
 const crearPropiedad = async (req, res) => {
   try {
-    const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, destacada, parroquia_id, sector_id } = req.body;
+    const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, destacada, parroquia_id, sector_id, sectores_relacionados } = req.body;
     if (!titulo || !precio) return res.status(400).json({ error: 'Título y precio son obligatorios' });
     const [result] = await db.query(
       `INSERT INTO propiedades (titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, destacada, parroquia_id, sector_id)
        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, destacada||0, parroquia_id, sector_id]
     );
+    await sincronizarSectoresRelacionados(result.insertId, sectores_relacionados);
     res.status(201).json({ mensaje: 'Propiedad creada', id: result.insertId });
   } catch (error) {
     console.error('Error crearPropiedad:', error.message);
@@ -101,13 +122,16 @@ const crearPropiedad = async (req, res) => {
 
 const editarPropiedad = async (req, res) => {
   try {
-    const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, destacada, parroquia_id, sector_id } = req.body;
+    const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, destacada, parroquia_id, sector_id, sectores_relacionados } = req.body;
     const [existe] = await db.query('SELECT id FROM propiedades WHERE id = ?', [req.params.id]);
     if (!existe.length) return res.status(404).json({ error: 'Propiedad no encontrada' });
     await db.query(
       `UPDATE propiedades SET titulo=?, precio=?, tipo=?, gestion=?, dueno_nombre=?, dueno_telefono=?, habitaciones=?, banos=?, metros=?, metros_terreno=?, metros_construccion=?, plantas=?, parqueadero=?, antiguedad=?, descripcion=?, tipo_unidad=?, link_mapa=?, link_recorrido=?, link_video=?, destacada=?, parroquia_id=?, sector_id=? WHERE id=?`,
       [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, destacada||0, parroquia_id, sector_id, req.params.id]
     );
+    if (sectores_relacionados !== undefined) {
+      await sincronizarSectoresRelacionados(req.params.id, sectores_relacionados);
+    }
     res.json({ mensaje: 'Propiedad actualizada' });
   } catch (error) {
     console.error('Error editarPropiedad:', error.message);
@@ -127,6 +151,7 @@ const eliminarPropiedad = async (req, res) => {
       await cloudinary.uploader.destroy(foto.public_id);
     }
 
+    await db.query('DELETE FROM propiedad_sectores WHERE propiedad_id = ?', [req.params.id]);
     await db.query('DELETE FROM propiedades WHERE id = ?', [req.params.id]);
 
     res.json({ mensaje: 'Propiedad eliminada correctamente' });

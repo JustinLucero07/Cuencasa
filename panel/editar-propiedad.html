@@ -133,8 +133,8 @@
           <div class="fg"><label class="fl">Tipo de operación</label><select class="fi" id="tipo"><option value="Venta">Venta</option><option value="Arriendo">Arriendo</option></select></div>
           <div class="fg"><label class="fl">Gestión</label><select class="fi" id="gestion"><option value="Casa">🏠 Casa</option><option value="Departamento">🏢 Departamento</option><option value="Terreno">🌍 Terreno</option><option value="VIP/miti miti">🏆 VIP/miti miti</option><option value="Local comercial">🏪 Local comercial</option></select></div>
           <div class="fg"><label class="fl">Precio <span>*</span></label><input class="fi" type="number" id="precio"></div>
-          <div class="fg"><label class="fl">Parroquia</label><select class="fi" id="parroquia"><option value="">Seleccionar parroquia</option></select></div>
-          <div class="fg"><label class="fl">Sector</label><select class="fi" id="sector"><option value="">Seleccionar sector</option></select></div>
+          <div class="fg"><label class="fl">Sector principal</label><select class="fi" id="parroquia"><option value="">Seleccionar sector principal</option></select></div>
+          <div class="fg full"><label class="fl">Sectores relacionados</label><div id="sectores-rel" style="display:flex;flex-wrap:wrap;gap:10px;border:1px solid #e5e7eb;border-radius:8px;padding:10px;max-height:150px;overflow:auto;background:#fff">Cargando...</div><span class="fhint">Marca todos los sectores relacionados con esta propiedad.</span></div>
           <div class="fg full"><label class="fl">Descripción</label><textarea class="fi" id="descripcion"></textarea></div>
           <div class="fg"><label class="fl">Tipo de Inmueble</label><select class="fi" id="tipo_unidad"><option value="">Sin especificar</option><option value="Independiente">🏡 Independiente</option><option value="Condominio">🏘️ Condominio</option></select></div>
         </div>
@@ -233,20 +233,18 @@ async function cargarParroquias() {
   } catch(e) {}
 }
 
-async function cargarSectores(sectorId) {
-  const sel = document.getElementById('sector');
-  sel.innerHTML = '<option value="">Seleccionar sector</option>';
+async function cargarSectores() {
+  const cont = document.getElementById('sectores-rel');
   try {
     const res  = await fetch(`${API}/api/sectores`);
     const data = await res.json();
-    data.forEach(s => {
-      const o = document.createElement('option');
-      o.value = s.id;
-      o.textContent = s.nombre + (s.parroquia ? ` (${s.parroquia})` : '');
-      sel.appendChild(o);
-    });
-    if (sectorId) sel.value = sectorId;
-  } catch(e) {}
+    if (!data.length) { cont.innerHTML = '<span style="font-size:12px;color:#888">No hay sectores creados todavía.</span>'; return; }
+    cont.innerHTML = data.map(s => `
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+        <input type="checkbox" class="sector-rel-chk" value="${s.id}">
+        ${s.nombre}${s.parroquia ? ` (${s.parroquia})` : ''}
+      </label>`).join('');
+  } catch(e) { cont.innerHTML = '<span style="font-size:12px;color:#c00">Error cargando sectores</span>'; }
 }
 
 async function cargarPropiedad() {
@@ -276,7 +274,8 @@ async function cargarPropiedad() {
     document.getElementById('link_video').value    = p.link_video||'';
     document.getElementById('destacada').checked  = !!p.destacada;
     if (p.parroquia_id) document.getElementById('parroquia').value = p.parroquia_id;
-    if (p.sector_id)   document.getElementById('sector').value    = p.sector_id;
+    const relIds = (p.sectores_relacionados||[]).map(s => String(s.id));
+    document.querySelectorAll('.sector-rel-chk').forEach(chk => { chk.checked = relIds.includes(chk.value); });
     renderFotosExistentes(p.fotos||[]);
     document.getElementById('skeleton').style.display   = 'none';
     document.getElementById('formulario').style.display = 'block';
@@ -336,6 +335,7 @@ async function guardar() {
   if (!titulo||!precio) { toast('Título y precio son obligatorios','err'); return; }
   const btn = document.getElementById('btn-guardar');
   btn.disabled=true; btn.innerHTML=`<svg viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="white" stroke-width="2" fill="none"/></svg> Guardando...`;
+  const sectoresRel = Array.from(document.querySelectorAll('.sector-rel-chk:checked')).map(c => Number(c.value));
   try {
     const res = await fetch(`${API}/api/propiedades/${id}`,{
       method:'PUT', headers:{'Content-Type':'application/json'},
@@ -346,7 +346,8 @@ async function guardar() {
         dueno_nombre: document.getElementById('dueno_nombre').value.trim()||null,
         dueno_telefono: document.getElementById('dueno_telefono').value.trim()||null,
         parroquia_id: document.getElementById('parroquia').value||null,
-        sector_id:    document.getElementById('sector').value||null,
+        sector_id:    sectoresRel[0]||null,
+        sectores_relacionados: sectoresRel,
         habitaciones: Number(document.getElementById('habitaciones').value)||null,
         banos:        Number(document.getElementById('banos').value)||null,
         plantas:      Number(document.getElementById('plantas').value)||null,

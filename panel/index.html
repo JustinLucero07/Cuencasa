@@ -599,7 +599,7 @@ async function cargarPropiedades() {
       const gc = p.gestion==='Departamento'?'badge-depto':p.gestion==='Proyecto'?'badge-proy':'badge-casa';
       return `<tr>
         <td>${img}</td>
-        <td><div style="font-weight:600;font-size:12px">${p.titulo}</div><div style="font-size:11px;color:var(--gray)">#${p.id}</div></td>
+        <td><div style="font-weight:600;font-size:12px">${p.titulo}</div><div style="font-size:11px;color:var(--gray)">#${p.id} ${p.codigo ? `· Cód. ${p.codigo}` : ''}</div></td>
         <td style="font-size:11px;color:var(--gray)">${ub}</td>
         <td style="font-weight:600;color:var(--red);font-size:12px">$${Number(p.precio).toLocaleString()}</td>
         <td><span class="badge ${p.tipo==='Arriendo'?'badge-arriendo':'badge-venta'}">${p.tipo}</span></td>

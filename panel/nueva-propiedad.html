@@ -118,10 +118,11 @@
       <div class="card-title"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Información principal</div>
       <div class="form-grid">
         <div class="fg full"><label class="fl">Título <span>*</span></label><input class="fi" type="text" id="titulo" placeholder="Ej. Casa moderna en El Vecino con jardín"></div>
+        <div class="fg"><label class="fl">Código</label><input class="fi" type="text" id="codigo" placeholder="Ej. CC-0042"><span class="fhint">Código interno de la propiedad</span></div>
         <div class="fg"><label class="fl">Tipo de operación <span>*</span></label><select class="fi" id="tipo"><option value="Venta">Venta</option><option value="Arriendo">Arriendo</option></select></div>
         <div class="fg"><label class="fl">Gestión <span>*</span></label><select class="fi" id="gestion"><option value="Casa">🏠 Casa</option><option value="Departamento">🏢 Departamento</option><option value="Terreno">🌍 Terreno</option><option value="VIP/miti miti">🏆 VIP/miti miti</option><option value="Local comercial">🏪 Local comercial</option></select></div>
         <div class="fg"><label class="fl">Precio <span>*</span></label><input class="fi" type="number" id="precio" placeholder="Ej. 185000"><span class="fhint">En dólares. Para arriendos es el precio mensual.</span></div>
-        <div class="fg"><label class="fl">Sector principal</label><select class="fi" id="parroquia"><option value="">Seleccionar sector principal</option></select></div>
+        <div class="fg"><label class="fl">Sector principal</label><select class="fi" id="sector_principal" onchange="alCambiarSectorPrincipal()"><option value="">Seleccionar sector principal</option></select></div>
         <div class="fg full"><label class="fl">Sectores relacionados</label><div id="sectores-rel" style="display:flex;flex-wrap:wrap;gap:10px;border:1px solid #e5e7eb;border-radius:8px;padding:10px;max-height:150px;overflow:auto;background:#fff">Cargando...</div><span class="fhint">Marca todos los sectores relacionados con esta propiedad.</span></div>
         <div class="fg full"><label class="fl">Descripción</label><textarea class="fi" id="descripcion" placeholder="Describe la propiedad..."></textarea></div>
         <div class="fg"><label class="fl">Tipo de Inmueble</label><select class="fi" id="tipo_unidad"><option value="">Sin especificar</option><option value="Independiente">🏡 Independiente</option><option value="Condominio">🏘️ Condominio</option></select></div>
@@ -159,6 +160,16 @@
         <div class="fg full"><label class="fl">Link de Google Maps</label><input class="fi" type="url" id="link_mapa" placeholder="https://maps.google.com/..."><span class="fhint">Pega el enlace para compartir de Google Maps</span></div>
         <div class="fg full"><label class="fl">Recorrido virtual (iframe o link)</label><textarea class="fi" id="link_recorrido" rows="3" placeholder="Pega el código iframe de Panoee o un link directo..." style="resize:vertical;font-size:12px;font-family:monospace;line-height:1.5;"></textarea><span class="fhint">Pega el código &lt;iframe&gt; que te da Panoee — el link se extrae automáticamente</span></div>
         <div class="fg full"><label class="fl">Video de YouTube</label><input class="fi" type="url" id="link_video" placeholder="https://www.youtube.com/watch?v=..."><span class="fhint">El video aparecerá embebido debajo de la descripción en la página de la propiedad</span></div>
+      </div>
+    </div>
+
+    <!-- LINKS DE PUBLICACIÓN -->
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Links de publicación</div>
+      <div class="form-grid">
+        <div class="fg full"><label class="fl">Facebook</label><input class="fi" type="url" id="link_facebook" placeholder="https://www.facebook.com/..."><span class="fhint">Link de la publicación en Facebook</span></div>
+        <div class="fg full"><label class="fl">Instagram</label><input class="fi" type="url" id="link_instagram" placeholder="https://www.instagram.com/p/..."><span class="fhint">Link de la publicación en Instagram</span></div>
+        <div class="fg full"><label class="fl">TikTok</label><input class="fi" type="url" id="link_tiktok" placeholder="https://www.tiktok.com/..."><span class="fhint">Link de la publicación en TikTok</span></div>
       </div>
     </div>
 
@@ -202,29 +213,55 @@
 const API = CONFIG.API;
 let fotos = [];
 
-document.addEventListener('DOMContentLoaded', () => { cargarParroquias(); cargarSectores(); });
+let todosLosSectores = [];
 
-async function cargarParroquias() {
-  try {
-    const res  = await fetch(`${API}/api/parroquias`);
-    const data = await res.json();
-    const sel  = document.getElementById('parroquia');
-    data.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.nombre; sel.appendChild(o); });
-  } catch(e) {}
-}
+document.addEventListener('DOMContentLoaded', () => { cargarSectores(); });
 
 async function cargarSectores() {
-  const cont = document.getElementById('sectores-rel');
   try {
-    const res  = await fetch(`${API}/api/sectores`);
-    const data = await res.json();
-    if (!data.length) { cont.innerHTML = '<span style="font-size:12px;color:#888">No hay sectores creados todavía.</span>'; return; }
-    cont.innerHTML = data.map(s => `
+    const res = await fetch(`${API}/api/sectores`);
+    todosLosSectores = await res.json();
+    renderSectorPrincipal();
+    renderSectoresRelacionados();
+  } catch(e) {
+    document.getElementById('sectores-rel').innerHTML = '<span style="font-size:12px;color:#c00">Error cargando sectores</span>';
+  }
+}
+
+function renderSectorPrincipal(valSeleccionado = '') {
+  const sel = document.getElementById('sector_principal');
+  sel.innerHTML = '<option value="">Seleccionar sector principal</option>';
+  todosLosSectores.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.id;
+    o.dataset.parroquiaId = s.parroquia_id || '';
+    o.textContent = s.nombre + (s.parroquia ? ` (${s.parroquia})` : '');
+    sel.appendChild(o);
+  });
+  if (valSeleccionado) sel.value = valSeleccionado;
+}
+
+function renderSectoresRelacionados(idsSeleccionados = []) {
+  const cont = document.getElementById('sectores-rel');
+  const principalId = Number(document.getElementById('sector_principal').value) || null;
+  const disponibles = todosLosSectores.filter(s => Number(s.id) !== principalId);
+  if (!disponibles.length) {
+    cont.innerHTML = '<span style="font-size:12px;color:#888">No hay otros sectores disponibles.</span>';
+    return;
+  }
+  cont.innerHTML = disponibles.map(s => {
+    const checked = idsSeleccionados.includes(Number(s.id)) ? 'checked' : '';
+    return `
       <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
-        <input type="checkbox" class="sector-rel-chk" value="${s.id}">
+        <input type="checkbox" class="sector-rel-chk" value="${s.id}" ${checked}>
         ${s.nombre}${s.parroquia ? ` (${s.parroquia})` : ''}
-      </label>`).join('');
-  } catch(e) { cont.innerHTML = '<span style="font-size:12px;color:#c00">Error cargando sectores</span>'; }
+      </label>`;
+  }).join('');
+}
+
+function alCambiarSectorPrincipal() {
+  const chks = Array.from(document.querySelectorAll('.sector-rel-chk:checked')).map(c => Number(c.value));
+  renderSectoresRelacionados(chks);
 }
 
 function previewFotos(e) { agregarFotos(Array.from(e.target.files)); e.target.value=''; }
@@ -266,18 +303,23 @@ async function guardar() {
   if (!titulo||!precio) { toast('Título y precio son obligatorios','err'); return; }
   const btn = document.getElementById('btn-guardar');
   btn.disabled=true; btn.innerHTML=`<svg viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="white" stroke-width="2" fill="none"/></svg> Guardando...`;
+  const selPrincipal = document.getElementById('sector_principal');
+  const sector_id = selPrincipal.value ? Number(selPrincipal.value) : null;
+  const optPrincipal = selPrincipal.options[selPrincipal.selectedIndex];
+  const parroquia_id = optPrincipal && optPrincipal.dataset.parroquiaId ? Number(optPrincipal.dataset.parroquiaId) : null;
   const sectoresRel = Array.from(document.querySelectorAll('.sector-rel-chk:checked')).map(c => Number(c.value));
   try {
     const res = await fetch(`${API}/api/propiedades`,{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         titulo, precio:Number(precio),
+        codigo:       document.getElementById('codigo').value.trim()||null,
         tipo:         document.getElementById('tipo').value,
         gestion:      document.getElementById('gestion').value,
         dueno_nombre: document.getElementById('dueno_nombre').value.trim()||null,
         dueno_telefono: document.getElementById('dueno_telefono').value.trim()||null,
-        parroquia_id: document.getElementById('parroquia').value||null,
-        sector_id:    sectoresRel[0]||null,
+        parroquia_id: parroquia_id,
+        sector_id:    sector_id,
         sectores_relacionados: sectoresRel,
         habitaciones: Number(document.getElementById('habitaciones').value)||null,
         banos:        Number(document.getElementById('banos').value)||null,
@@ -292,6 +334,9 @@ async function guardar() {
         link_mapa:    document.getElementById('link_mapa').value.trim()||null,
         link_recorrido: extractRecorridoUrl(document.getElementById('link_recorrido').value)||null,
         link_video:   document.getElementById('link_video').value.trim()||null,
+        link_facebook: document.getElementById('link_facebook').value.trim()||null,
+        link_instagram: document.getElementById('link_instagram').value.trim()||null,
+        link_tiktok:  document.getElementById('link_tiktok').value.trim()||null,
         destacada:    document.getElementById('destacada').checked?1:0,
       })
     });

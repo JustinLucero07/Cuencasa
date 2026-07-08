@@ -251,16 +251,16 @@
     </div>
 
     <div class="fg">
-      <label class="fl">Parroquia</label>
-      <select class="fi" id="f-parroquia">
-        <option value="">Todas las parroquias</option>
+      <label class="fl">Sector</label>
+      <select class="fi" id="f-parroquia" onchange="autoFiltrar(); cargarSectores();">
+        <option value="">Todos los sectores</option>
       </select>
     </div>
 
     <div class="fg">
-      <label class="fl">Sector</label>
-      <select class="fi" id="f-sector">
-        <option value="">Todos los sectores</option>
+      <label class="fl">Sectores relacionados</label>
+      <select class="fi" id="f-sector" onchange="autoFiltrar()">
+        <option value="">Todos</option>
       </select>
     </div>
 
@@ -383,7 +383,26 @@ document.addEventListener('DOMContentLoaded', () => {
   leerURLParams();
   cargarPropiedades();
   cargarWhatsapp();
+
+  // Auto-filtrar en desktop: campos de texto (precio, metros) con debounce
+  let debounceTimer;
+  ['f-precio-min','f-precio-max','f-metros'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => autoFiltrar(), 400);
+    });
+  });
 });
+
+// Auto-filtrar solo en desktop (no dentro del modal móvil)
+function autoFiltrar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && sidebar.classList.contains('modal-open')) return; // en móvil no auto-filtrar
+  if (window.innerWidth <= 768) return;
+  paginaActual = 1;
+  actualizarContadorFiltros();
+  aplicarFiltros();
+}
 
 async function cargarWhatsapp() {
   try {
@@ -417,7 +436,7 @@ async function cargarParroquias() {
 
 async function cargarSectores() {
   const sel = document.getElementById('f-sector');
-  sel.innerHTML = '<option value="">Todos los sectores</option>';
+  sel.innerHTML = '<option value="">Todos</option>';
   try {
     const res  = await fetch(`${API}/api/sectores`);
     const data = await res.json();
@@ -446,6 +465,7 @@ function toggleChip(el, grupo) {
   if (filtros[grupo] === el.dataset.val) { filtros[grupo] = ''; }
   else { filtros[grupo] = el.dataset.val; el.classList.add('active'); }
   actualizarContadorFiltros();
+  autoFiltrar();
 }
 
 function actualizarContadorFiltros() {
@@ -547,7 +567,7 @@ function limpiarFiltros() {
   document.getElementById('f-precio-min').value = '';
   document.getElementById('f-precio-max').value = '';
   document.getElementById('f-metros').value     = '';
-  document.getElementById('f-sector').innerHTML = '<option value="">Todos los sectores</option>';
+  document.getElementById('f-sector').innerHTML = '<option value="">Todos</option>';
   paginaActual = 1;
   actualizarContadorFiltros();
   aplicarFiltros();
@@ -620,6 +640,7 @@ function crearCard(p, i) {
     </div>
     <div class="card-body">
       <div class="card-price">${precioLabel}</div>
+      ${p.codigo ? `<div style="font-size:11px;font-weight:700;color:#C8102E;margin-bottom:2px;">Cód. ${p.codigo}</div>` : ''}
       <div class="card-title">${p.titulo}</div>
       <div class="card-loc">
         <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>

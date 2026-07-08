@@ -452,6 +452,7 @@
         </div>
         <div class="card-body">
           <div class="card-price">${precioLabel}</div>
+          ${p.codigo ? `<div style="font-size:11px;font-weight:700;color:#C8102E;margin-bottom:2px;">Cód. ${p.codigo}</div>` : ''}
           <div class="card-name">${p.titulo}</div>
           <div class="card-loc"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${ubicacion}</div>
           <div class="card-features">

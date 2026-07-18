@@ -414,11 +414,66 @@ async function cargarWhatsapp() {
 
 function leerURLParams() {
   const p = new URLSearchParams(window.location.search);
-  if (p.get('tipo'))       { filtros.tipo = p.get('tipo'); document.querySelectorAll('#chips-tipo .chip').forEach(c => { if (c.dataset.val === p.get('tipo')) c.classList.add('active'); }); }
-  if (p.get('parroquia'))  document.getElementById('f-parroquia').value = p.get('parroquia');
+
+  // 1. Operación (Venta / Arriendo): puede venir en ?operacion= o en ?tipo= (si el valor es venta o arriendo)
+  const paramOperacion = p.get('operacion') || (['venta','arriendo'].includes((p.get('tipo')||'').toLowerCase()) ? p.get('tipo') : null);
+  if (paramOperacion) {
+    const opLower = paramOperacion.toLowerCase();
+    const opVal = opLower === 'venta' ? 'Venta' : (opLower === 'arriendo' ? 'Arriendo' : null);
+    if (opVal) {
+      filtros.tipo = opVal;
+      document.querySelectorAll('#chips-tipo .chip').forEach(c => {
+        if (c.dataset.val === opVal) c.classList.add('active');
+      });
+    }
+  }
+
+  // 2. Gestión / Tipo de Propiedad (Casa, Departamento, Terreno, Local comercial, VIP/miti miti):
+  // Puede venir en ?tipo= (cuando es casa, departamento, terreno, local, vip) o en ?gestion=
+  const paramGestion = p.get('gestion') || (!['venta','arriendo'].includes((p.get('tipo')||'').toLowerCase()) ? p.get('tipo') : null);
+  if (paramGestion) {
+    const gLower = paramGestion.toLowerCase();
+    let gVal = null;
+    if (gLower.includes('casa')) gVal = 'Casa';
+    else if (gLower.includes('departamento') || gLower.includes('depto')) gVal = 'Departamento';
+    else if (gLower.includes('terreno')) gVal = 'Terreno';
+    else if (gLower.includes('local')) gVal = 'Local comercial';
+    else if (gLower.includes('vip') || gLower.includes('miti')) gVal = 'VIP/miti miti';
+
+    if (gVal) {
+      filtros.gestion = gVal;
+      document.querySelectorAll('#chips-gestion .chip').forEach(c => {
+        if (c.dataset.val === gVal) c.classList.add('active');
+      });
+    }
+  }
+
+  // 3. Tipo de inmueble (Independiente / Condominio)
+  const paramTu = p.get('tu') || p.get('inmueble');
+  if (paramTu) {
+    const tuLower = paramTu.toLowerCase();
+    const tuVal = tuLower.includes('independiente') ? 'Independiente' : (tuLower.includes('condominio') ? 'Condominio' : null);
+    if (tuVal) {
+      filtros.tu = tuVal;
+      document.querySelectorAll('#chips-tu .chip').forEach(c => {
+        if (c.dataset.val === tuVal) c.classList.add('active');
+      });
+    }
+  }
+
+  // 4. Parroquia y Sector
+  window._urlParroquia = p.get('parroquia');
+  window._urlSector    = p.get('sector');
+  if (window._urlParroquia) document.getElementById('f-parroquia').value = window._urlParroquia;
+  if (window._urlSector)    document.getElementById('f-sector').value    = window._urlSector;
+
+  // 5. Otros filtros numéricos / casillas
   if (p.get('precio_min')) document.getElementById('f-precio-min').value = p.get('precio_min');
   if (p.get('precio_max')) document.getElementById('f-precio-max').value = p.get('precio_max');
   if (p.get('hab'))        { filtros.hab = p.get('hab'); document.querySelectorAll('#chips-hab .chip').forEach(c => { if (c.dataset.val === p.get('hab')) c.classList.add('active'); }); }
+  if (p.get('banos'))      { filtros.banos = p.get('banos'); document.querySelectorAll('#chips-banos .chip').forEach(c => { if (c.dataset.val === p.get('banos')) c.classList.add('active'); }); }
+  if (p.get('parq'))       { filtros.parq = '1'; document.querySelectorAll('#chips-parq .chip').forEach(c => c.classList.add('active')); }
+
   actualizarContadorFiltros();
 }
 
@@ -429,8 +484,7 @@ async function cargarParroquias() {
     const data = await res.json();
     const sel  = document.getElementById('f-parroquia');
     data.forEach(p => { const o = document.createElement('option'); o.value = p.id; o.textContent = p.nombre; sel.appendChild(o); });
-    const parParam = new URLSearchParams(window.location.search).get('parroquia');
-    if (parParam) { sel.value = parParam; cargarSectores(); }
+    if (window._urlParroquia) { sel.value = window._urlParroquia; cargarSectores(); aplicarFiltros(); }
   } catch(e) { console.error(e); }
 }
 
@@ -441,6 +495,7 @@ async function cargarSectores() {
     const res  = await fetch(`${API}/api/sectores`);
     const data = await res.json();
     data.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.nombre; sel.appendChild(o); });
+    if (window._urlSector) { sel.value = window._urlSector; aplicarFiltros(); }
   } catch(e) { console.error(e); }
 }
 
@@ -523,8 +578,8 @@ function toggleFilterModal() {
 }
 
 function aplicarFiltros() {
-  const parroquiaId = document.getElementById('f-parroquia').value;
-  const sectorId    = document.getElementById('f-sector').value;
+  const parroquiaId = document.getElementById('f-parroquia').value || window._urlParroquia;
+  const sectorId    = document.getElementById('f-sector').value    || window._urlSector;
   const precioMin   = Number(document.getElementById('f-precio-min').value) || 0;
   const precioMax   = Number(document.getElementById('f-precio-max').value) || Infinity;
   const metros      = Number(document.getElementById('f-metros').value) || 0;

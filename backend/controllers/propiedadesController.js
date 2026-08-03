@@ -21,6 +21,7 @@ const getPropiedades = async (req, res) => {
       SELECT p.*,
         par.nombre AS parroquia,
         sec.nombre AS sector,
+        (SELECT GROUP_CONCAT(ps.sector_id) FROM propiedad_sectores ps WHERE ps.propiedad_id = p.id) AS sectores_rel_ids,
         (SELECT url FROM fotos WHERE propiedad_id = p.id LIMIT 1) AS foto_principal
       FROM propiedades p
       LEFT JOIN parroquias par ON par.id = p.parroquia_id

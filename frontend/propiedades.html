@@ -589,7 +589,11 @@ function aplicarFiltros() {
     if (filtros.gestion && p.gestion !== filtros.gestion) return false;
     if (filtros.tu      && p.tipo_unidad !== filtros.tu) return false;
     if (parroquiaId    && String(p.parroquia_id) !== String(parroquiaId)) return false;
-    if (sectorId       && String(p.sector_id) !== String(sectorId)) return false;
+    if (sectorId) {
+      const relacionados = String(p.sectores_rel_ids || '').split(',').filter(Boolean);
+      const coincide = String(p.sector_id) === String(sectorId) || relacionados.includes(String(sectorId));
+      if (!coincide) return false;
+    }
     if (p.precio < precioMin || p.precio > precioMax) return false;
     if (filtros.hab    && (!p.habitaciones || p.habitaciones < Number(filtros.hab))) return false;
     if (filtros.banos  && (!p.banos || p.banos < Number(filtros.banos))) return false;

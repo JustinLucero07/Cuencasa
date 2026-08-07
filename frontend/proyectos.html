@@ -406,7 +406,11 @@ function aplicarFiltros() {
   proyectosFiltrados = todosProyectos.filter(p => {
     if (filtros.estado && p.estado !== filtros.estado) return false;
     if (parroquiaId    && String(p.parroquia_id) !== String(parroquiaId)) return false;
-    if (sectorId       && String(p.sector_id) !== String(sectorId)) return false;
+    if (sectorId) {
+      const relacionados = String(p.sectores_rel_ids || '').split(',').filter(Boolean);
+      const coincide = String(p.sector_id) === String(sectorId) || relacionados.includes(String(sectorId));
+      if (!coincide) return false;
+    }
     if (p.precio_desde && p.precio_desde > precioMax) return false;
     if (p.precio_hasta && p.precio_hasta < precioMin) return false;
     return true;

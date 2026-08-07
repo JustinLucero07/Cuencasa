@@ -3,6 +3,17 @@ const router         = express.Router();
 const db             = require('../config/db');
 const { cloudinary, upload } = require('../config/cloudinary');
 
+// Reemplaza los sectores relacionados de un proyecto por la lista recibida.
+const sincronizarSectoresRelacionados = async (proyectoId, sectores) => {
+  await db.query('DELETE FROM proyecto_sectores WHERE proyecto_id = ?', [proyectoId]);
+  if (!Array.isArray(sectores) || !sectores.length) return;
+  const ids = [...new Set(sectores.map(Number).filter(Boolean))];
+  if (!ids.length) return;
+  const values = ids.map(() => '(?, ?)').join(', ');
+  const params = ids.flatMap(id => [proyectoId, id]);
+  await db.query(`INSERT INTO proyecto_sectores (proyecto_id, sector_id) VALUES ${values}`, params);
+};
+
 // GET todos los proyectos
 router.get('/', async (req, res) => {
   try {
@@ -11,6 +22,7 @@ router.get('/', async (req, res) => {
       SELECT p.*,
         par.nombre AS parroquia,
         sec.nombre AS sector,
+        (SELECT GROUP_CONCAT(ps.sector_id) FROM proyecto_sectores ps WHERE ps.proyecto_id = p.id) AS sectores_rel_ids,
         (SELECT url FROM proyectos_fotos WHERE proyecto_id = p.id LIMIT 1) AS foto_principal
       FROM proyectos p
       LEFT JOIN parroquias par ON par.id = p.parroquia_id
@@ -39,7 +51,14 @@ router.get('/:id', async (req, res) => {
     if (!proyectos.length) return res.status(404).json({ error: 'Proyecto no encontrado' });
     const [fotos]    = await db.query('SELECT * FROM proyectos_fotos WHERE proyecto_id = ?', [req.params.id]);
     const [unidades] = await db.query('SELECT * FROM proyecto_unidades WHERE proyecto_id = ? ORDER BY precio', [req.params.id]);
-    res.json({ ...proyectos[0], fotos, unidades });
+    const [relacionados] = await db.query(
+      `SELECT s.id, s.nombre
+       FROM proyecto_sectores ps
+       JOIN sectores s ON s.id = ps.sector_id
+       WHERE ps.proyecto_id = ?`,
+      [req.params.id]
+    );
+    res.json({ ...proyectos[0], fotos, unidades, sectores_relacionados: relacionados });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -48,13 +67,14 @@ router.get('/:id', async (req, res) => {
 // POST crear proyecto
 router.post('/', async (req, res) => {
   try {
-    const { titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, link_mapa, link_recorrido, link_video, destacado, parroquia_id, sector_id, estado, entrega } = req.body;
+    const { titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, link_mapa, link_recorrido, link_video, destacado, parroquia_id, sector_id, estado, entrega, sectores_relacionados } = req.body;
     if (!titulo) return res.status(400).json({ error: 'Título es obligatorio' });
     const [result] = await db.query(
       `INSERT INTO proyectos (titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, link_mapa, link_recorrido, link_video, destacado, parroquia_id, sector_id, estado, entrega)
        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, link_mapa, link_recorrido, link_video||null, destacado||0, parroquia_id, sector_id, estado, entrega]
     );
+    await sincronizarSectoresRelacionados(result.insertId, sectores_relacionados);
     res.status(201).json({ id: result.insertId, mensaje: 'Proyecto creado' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -64,11 +84,14 @@ router.post('/', async (req, res) => {
 // PUT editar proyecto
 router.put('/:id', async (req, res) => {
   try {
-    const { titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, link_mapa, link_recorrido, link_video, destacado, parroquia_id, sector_id, estado, entrega } = req.body;
+    const { titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, link_mapa, link_recorrido, link_video, destacado, parroquia_id, sector_id, estado, entrega, sectores_relacionados } = req.body;
     await db.query(
       `UPDATE proyectos SET titulo=?, tipo=?, precio_desde=?, precio_hasta=?, descripcion=?, metros_terreno=?, metros_construccion=?, plantas=?, parqueadero=?, antiguedad=?, link_mapa=?, link_recorrido=?, link_video=?, destacado=?, parroquia_id=?, sector_id=?, estado=?, entrega=? WHERE id=?`,
       [titulo, tipo, precio_desde, precio_hasta, descripcion, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, link_mapa, link_recorrido, link_video||null, destacado||0, parroquia_id, sector_id, estado, entrega, req.params.id]
     );
+    if (sectores_relacionados !== undefined) {
+      await sincronizarSectoresRelacionados(req.params.id, sectores_relacionados);
+    }
     res.json({ mensaje: 'Proyecto actualizado' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -80,6 +103,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const [fotos] = await db.query('SELECT public_id FROM proyectos_fotos WHERE proyecto_id = ?', [req.params.id]);
     for (const f of fotos) await cloudinary.uploader.destroy(f.public_id);
+    await db.query('DELETE FROM proyecto_sectores WHERE proyecto_id = ?', [req.params.id]);
     await db.query('DELETE FROM proyectos WHERE id = ?', [req.params.id]);
     res.json({ mensaje: 'Proyecto eliminado' });
   } catch (err) {

@@ -133,8 +133,8 @@
         <div class="fg"><label class="fl">Precio desde ($)</label><input class="fi" type="number" id="precio_desde" placeholder="Ej. 85000"></div>
         <div class="fg"><label class="fl">Precio hasta ($)</label><input class="fi" type="number" id="precio_hasta" placeholder="Ej. 165000"></div>
         <div class="fg"><label class="fl">Fecha de entrega</label><input class="fi" type="text" id="entrega" placeholder="Ej. Junio 2026"></div>
-        <div class="fg"><label class="fl">Parroquia</label><select class="fi" id="parroquia"><option value="">Seleccionar parroquia</option></select></div>
-        <div class="fg"><label class="fl">Sector</label><select class="fi" id="sector"><option value="">Seleccionar sector</option></select></div>
+        <div class="fg"><label class="fl">Sector principal</label><select class="fi" id="parroquia"><option value="">Seleccionar sector principal</option></select></div>
+        <div class="fg full"><label class="fl">Sectores relacionados</label><div id="sectores-rel" style="display:flex;flex-wrap:wrap;gap:10px;border:1px solid #e5e7eb;border-radius:8px;padding:10px;max-height:150px;overflow:auto;background:#fff">Cargando...</div><span class="fhint">Marca todos los sectores relacionados con este proyecto.</span></div>
         <div class="fg full"><label class="fl">Descripcion</label><textarea class="fi" id="descripcion" placeholder="Describe el proyecto, amenidades, ubicacion..."></textarea></div>
       </div>
     </div>
@@ -228,12 +228,16 @@ async function cargarParroquias() {
 }
 
 async function cargarSectores() {
-  const sel = document.getElementById('sector');
-  sel.innerHTML = '<option value="">Seleccionar sector</option>';
+  const cont = document.getElementById('sectores-rel');
   try {
     const res = await fetch(`${API}/api/sectores`); const data = await res.json();
-    data.forEach(s => { const o=document.createElement('option'); o.value=s.id; o.textContent=s.nombre+(s.parroquia?` (${s.parroquia})`:''); sel.appendChild(o); });
-  } catch(e) {}
+    if (!data.length) { cont.innerHTML = '<span style="font-size:12px;color:#888">No hay sectores creados todavía.</span>'; return; }
+    cont.innerHTML = data.map(s => `
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+        <input type="checkbox" class="sector-rel-chk" value="${s.id}">
+        ${s.nombre}${s.parroquia ? ` (${s.parroquia})` : ''}
+      </label>`).join('');
+  } catch(e) { cont.innerHTML = '<span style="font-size:12px;color:#c00">Error cargando sectores</span>'; }
 }
 
 // UNIDADES
@@ -303,6 +307,7 @@ async function guardar() {
   if (!titulo) { toast('El titulo es obligatorio','err'); return; }
   const btn = document.getElementById('btn-guardar');
   btn.disabled=true; btn.innerHTML=`<svg viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" stroke="white" stroke-width="2" fill="none"/></svg> Guardando...`;
+  const sectoresRel = Array.from(document.querySelectorAll('.sector-rel-chk:checked')).map(c => Number(c.value));
   try {
     // 1. Crear proyecto
     const res = await fetch(`${API}/api/proyectos`,{
@@ -315,7 +320,8 @@ async function guardar() {
         precio_hasta:        Number(document.getElementById('precio_hasta').value)||null,
         entrega:             document.getElementById('entrega').value.trim()||null,
         parroquia_id:        document.getElementById('parroquia').value||null,
-        sector_id:           document.getElementById('sector').value||null,
+        sector_id:           sectoresRel[0]||null,
+        sectores_relacionados: sectoresRel,
         descripcion:         document.getElementById('descripcion').value.trim(),
         plantas:             Number(document.getElementById('plantas').value)||null,
         metros_terreno:      Number(document.getElementById('metros_terreno').value)||null,

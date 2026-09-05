@@ -108,10 +108,15 @@ const crearPropiedad = async (req, res) => {
   try {
     const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, codigo, link_facebook, link_instagram, link_tiktok, destacada, parroquia_id, sector_id, sectores_relacionados } = req.body;
     if (!titulo || !precio) return res.status(400).json({ error: 'Título y precio son obligatorios' });
+    
+    const fb = Array.isArray(link_facebook) ? JSON.stringify(link_facebook) : (link_facebook || null);
+    const ig = Array.isArray(link_instagram) ? JSON.stringify(link_instagram) : (link_instagram || null);
+    const tt = Array.isArray(link_tiktok) ? JSON.stringify(link_tiktok) : (link_tiktok || null);
+
     const [result] = await db.query(
       `INSERT INTO propiedades (titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, codigo, link_facebook, link_instagram, link_tiktok, destacada, parroquia_id, sector_id)
        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, codigo||null, link_facebook||null, link_instagram||null, link_tiktok||null, destacada||0, parroquia_id, sector_id]
+      [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, codigo||null, fb, ig, tt, destacada||0, parroquia_id, sector_id]
     );
     await sincronizarSectoresRelacionados(result.insertId, sectores_relacionados);
     res.status(201).json({ mensaje: 'Propiedad creada', id: result.insertId });
@@ -126,9 +131,14 @@ const editarPropiedad = async (req, res) => {
     const { titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero, antiguedad, descripcion, tipo_unidad, link_mapa, link_recorrido, link_video, codigo, link_facebook, link_instagram, link_tiktok, destacada, parroquia_id, sector_id, sectores_relacionados } = req.body;
     const [existe] = await db.query('SELECT id FROM propiedades WHERE id = ?', [req.params.id]);
     if (!existe.length) return res.status(404).json({ error: 'Propiedad no encontrada' });
+
+    const fb = Array.isArray(link_facebook) ? JSON.stringify(link_facebook) : (link_facebook || null);
+    const ig = Array.isArray(link_instagram) ? JSON.stringify(link_instagram) : (link_instagram || null);
+    const tt = Array.isArray(link_tiktok) ? JSON.stringify(link_tiktok) : (link_tiktok || null);
+
     await db.query(
       `UPDATE propiedades SET titulo=?, precio=?, tipo=?, gestion=?, dueno_nombre=?, dueno_telefono=?, habitaciones=?, banos=?, metros=?, metros_terreno=?, metros_construccion=?, plantas=?, parqueadero=?, antiguedad=?, descripcion=?, tipo_unidad=?, link_mapa=?, link_recorrido=?, link_video=?, codigo=?, link_facebook=?, link_instagram=?, link_tiktok=?, destacada=?, parroquia_id=?, sector_id=? WHERE id=?`,
-      [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, codigo||null, link_facebook||null, link_instagram||null, link_tiktok||null, destacada||0, parroquia_id, sector_id, req.params.id]
+      [titulo, precio, tipo, gestion, dueno_nombre, dueno_telefono, habitaciones, banos, metros, metros_terreno, metros_construccion, plantas, parqueadero||0, antiguedad, descripcion, tipo_unidad||null, link_mapa, link_recorrido, link_video||null, codigo||null, fb, ig, tt, destacada||0, parroquia_id, sector_id, req.params.id]
     );
     if (sectores_relacionados !== undefined) {
       await sincronizarSectoresRelacionados(req.params.id, sectores_relacionados);

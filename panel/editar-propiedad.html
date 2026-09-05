@@ -179,9 +179,24 @@
       <div class="card">
         <div class="card-title"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Links de publicación</div>
         <div class="form-grid">
-          <div class="fg full"><label class="fl">Facebook</label><input class="fi" type="url" id="link_facebook" placeholder="https://www.facebook.com/..."><span class="fhint">Link de la publicación en Facebook</span></div>
-          <div class="fg full"><label class="fl">Instagram</label><input class="fi" type="url" id="link_instagram" placeholder="https://www.instagram.com/p/..."><span class="fhint">Link de la publicación en Instagram</span></div>
-          <div class="fg full"><label class="fl">TikTok</label><input class="fi" type="url" id="link_tiktok" placeholder="https://www.tiktok.com/..."><span class="fhint">Link de la publicación en TikTok</span></div>
+          <div class="fg full">
+            <label class="fl" style="display:flex;justify-content:space-between;align-items:center">
+              Facebook <button type="button" style="background:none;border:none;color:var(--primary);font-size:12px;cursor:pointer;font-weight:600" onclick="agregarInputLink('facebook')">+ Añadir otro</button>
+            </label>
+            <div id="container_link_facebook" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          <div class="fg full">
+            <label class="fl" style="display:flex;justify-content:space-between;align-items:center">
+              Instagram <button type="button" style="background:none;border:none;color:var(--primary);font-size:12px;cursor:pointer;font-weight:600" onclick="agregarInputLink('instagram')">+ Añadir otro</button>
+            </label>
+            <div id="container_link_instagram" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          <div class="fg full">
+            <label class="fl" style="display:flex;justify-content:space-between;align-items:center">
+              TikTok <button type="button" style="background:none;border:none;color:var(--primary);font-size:12px;cursor:pointer;font-weight:600" onclick="agregarInputLink('tiktok')">+ Añadir otro</button>
+            </label>
+            <div id="container_link_tiktok" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
         </div>
       </div>
 
@@ -283,6 +298,34 @@ function alCambiarSectorPrincipal() {
   renderSectoresRelacionados(chks);
 }
 
+function parseLinks(val) {
+  if (!val) return [];
+  try { const arr = JSON.parse(val); return Array.isArray(arr) ? arr : [val]; }
+  catch(e) { return [val]; }
+}
+
+function renderInputLinks(red, links) {
+  const container = document.getElementById(`container_link_${red}`);
+  container.innerHTML = '';
+  if (!links || !links.length) {
+    agregarInputLink(red, '');
+    return;
+  }
+  links.forEach(l => agregarInputLink(red, l));
+}
+
+function agregarInputLink(red, val = '') {
+  const container = document.getElementById(`container_link_${red}`);
+  const div = document.createElement('div');
+  div.style.display = 'flex';
+  div.style.gap = '8px';
+  div.innerHTML = `
+    <input class="fi link-${red}-input" type="url" placeholder="https://www.${red}.com/..." value="${val.replace(/"/g, '&quot;')}">
+    <button type="button" class="btn-outline" style="padding:0 12px;font-size:18px;border-color:#f87171;color:#f87171" onclick="this.parentElement.remove()">-</button>
+  `;
+  container.appendChild(div);
+}
+
 async function cargarPropiedad() {
   try {
     const res = await fetch(`${API}/api/propiedades/${id}`);
@@ -310,9 +353,10 @@ async function cargarPropiedad() {
     document.getElementById('link_video').value    = p.link_video||'';
     document.getElementById('destacada').checked  = !!p.destacada;
     document.getElementById('codigo').value        = p.codigo||'';
-    document.getElementById('link_facebook').value  = p.link_facebook||'';
-    document.getElementById('link_instagram').value = p.link_instagram||'';
-    document.getElementById('link_tiktok').value    = p.link_tiktok||'';
+    
+    renderInputLinks('facebook', parseLinks(p.link_facebook));
+    renderInputLinks('instagram', parseLinks(p.link_instagram));
+    renderInputLinks('tiktok', parseLinks(p.link_tiktok));
     const relIds = (p.sectores_relacionados||[]).map(s => Number(s.id));
     renderSectorPrincipal(p.sector_id || '');
     renderSectoresRelacionados(relIds);
@@ -406,9 +450,9 @@ async function guardar() {
         link_mapa:    document.getElementById('link_mapa').value.trim()||null,
         link_recorrido: extractRecorridoUrl(document.getElementById('link_recorrido').value)||null,
         link_video:   document.getElementById('link_video').value.trim()||null,
-        link_facebook: document.getElementById('link_facebook').value.trim()||null,
-        link_instagram: document.getElementById('link_instagram').value.trim()||null,
-        link_tiktok:  document.getElementById('link_tiktok').value.trim()||null,
+        link_facebook: Array.from(document.querySelectorAll('.link-facebook-input')).map(i => i.value.trim()).filter(Boolean),
+        link_instagram: Array.from(document.querySelectorAll('.link-instagram-input')).map(i => i.value.trim()).filter(Boolean),
+        link_tiktok:  Array.from(document.querySelectorAll('.link-tiktok-input')).map(i => i.value.trim()).filter(Boolean),
         destacada:    document.getElementById('destacada').checked?1:0,
       })
     });
